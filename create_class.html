@@ -15,65 +15,41 @@ to download list of connected emails/names-->
     <link rel="icon" href="../../favicon.ico">
     <title>ClassRoom Connect</title>
     <!-- Bootstrap core CSS -->
-   <link href="bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+   <link href="linkedFiles/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="starter-template.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet" type="text/css" >
   </head>
-  <body>
-<h2>Create a class:</h2>
-<div>
-<form action="host.html">
-  <br>
-  Class Name:</br>
-<input type = "text" name = "Name">
-<br>
-Your classroom ID # is:</br>
-<p class = "id" id="idNum" ><p>
-<button type="submit" class = "Start" onclick="window.location.href='host.html'"value="start">Start</button>
-</div>
-</form>
-<div>
-<button type="button" class = "Cancel" onclick="window.location.href='home.html'"value="create">Cancel</button>
-</div>
-<div>
-
-</div>
+  <body class = "create_body" >
+    <div class = "form" onsubmit="return check_if_empty()">
+      <form action="host.html" class ="create_form" name = "create_text">
+        <h2>Create a class:</h2>
+        <h3>Class Name:</h3>
+        <input type = "text" name = "Name">
+        <h3>Your classroom ID # is:</h3>
+        <p class = "id" id="idNum" ><p>
+          <button type="submit" class = "button create_buttons" value="start">Start</button>
+          <div>
+            <button type="button" class = "button create_buttons" onclick="window.location.href='home.html'"value="create">Cancel</button>
+          </div>
+        </form>
+  </div>
 <script>
-document.getElementById("idNum").innerHTML = Math.floor(Math.random()*(1000-1)+1);
+var ID = Math.floor(Math.random()*(1000-1)+1);
+document.getElementById("idNum").innerHTML = ID;
 </script>
-    <style>
-      body {
-  padding-top: 80px;
-  padding-left: 20px;
-  padding-right: 20px;
-      }
-      .starter-template {
-  padding: 40px 15px;
-      text-align: left;
-     <!-- a.navbar-brand{
-      position: relative;
-      top:-5px;-->
-     body.radio2{
-     background-color: #4CAF50;
-     }
-
-     body.h2{
-       position:relative;;
-       text-align: center;
-     }
-     div.buttons{
-       position: relative;
-
-     }
-     p.id{
-       font-weight: bold;
-     }
+<script type="text/javascript">
+function check_if_empty(){
+  if(!create_text.Name.value){
+    alert("Please fill in the text box.");
+    return false;
   }
-
-    </style>
+  return true;
+}
+</script>
      <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">

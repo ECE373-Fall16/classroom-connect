@@ -12,14 +12,14 @@
     <title>ClassRoom Connect</title>
 
     <!-- Bootstrap core CSS -->
-   <link href="bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-
+   <link href="linkedFiles/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+   <link href="main.css" rel="stylesheet" type="text/css" >
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="starter-template.css" rel="stylesheet">
-
+    <link href="main.css" rel="stylesheet" type="text/css" >
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
@@ -30,24 +30,40 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-
-  <body>
-    <style>
-      body {
-  padding-top: 50px;
-      }
-      .starter-template {
-  padding: 40px 15px;
-      text-align: left;
-     <!-- a.navbar-brand{
-      position: relative;
-      top:-5px;-->
-     body.radio2{
-     background-color: #4CAF50;
-     }
-  }
-
-    </style>
+  <body class = "student_body">
+      <div class="starter-template">
+        <h1>Poll Response</h1>
+        <form class = "radio_form">
+          <div class="radio">
+            <label class = "radio_class"><input type="radio" name="poll">A</label>
+          </div>
+          <div class="radio">
+            <label class = "radio_class"><input type="radio" name="poll">B</label>
+          </div>
+          <div class="radio">
+            <label class = "radio_class"><input type="radio" name="poll">C</label>
+          </div>
+          <div class="radio">
+            <label class = "radio_class"><input type="radio" name="poll">D</label>
+          </div>
+          <div>
+            <input type="submit" value="Send Poll Response" class ="button student_buttons">
+          </div>
+        </form>
+        <h1>The lecture is...</h1>
+        <form>
+          <div class="radio">
+            <label ><input type="radio" name="poll">Extremely Confusing</label>
+            <label ><input type="radio" name="poll">Somewhat Confusing</label>
+            <label ><input type="radio" name="poll">Pretty Good</label>
+            <label ><input type="radio" name="poll">Very Good</label>
+          </div>
+          <div>
+          <input type="submit" value="Send your level of understanding" class ="button student_buttons">
+        </div>
+	     </form>
+        <p class="lead">All answers are anonymous.</p>
+      </div>
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -59,9 +75,6 @@
           </button>
          <!-- <a class="navbar-brand" href="#"><img src =logo.png alt=ClassRoom Connect height=40 width=200></a>-->
 	   <a class="navbar-brand" href="#">ClassRoom Connect</a>
-	  <style>
-
-	  </style>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -73,44 +86,6 @@
       </div>
     </nav>
 
-    <div class="container">
-
-      <div class="starter-template">
-        <h1>Poll Response</h1>
-<form>
-    <div class="radio">
-      <label><input type="radio" name="poll">A</label>
-    </div>
-    <div class="radio">
-      <label><input type="radio" name="poll">B</label>
-    </div>
-    <div class="radio">
-      <label><input type="radio" name="poll">C</label>
-    </div>
-    <div class="radio">
-      <label><input type="radio" name="poll">D</label>
-    </div>
-    <div>
-      <input type="submit" value="Submit">
-    </div>
-</form>
-<h1>The lecture is...</h1>
-<form>
-    <div class="radio">
-      <label><input type="radio" name="poll">Extremely Confusing</label>
-      <label><input type="radio" name="poll">Somewhat Confusing</label>
-      <label><input type="radio" name="poll">Pretty Good</label>
-      <label><input type="radio" name="poll">Very Good</label>
-      </div>
-    <div>
-      <input type="submit" value="Submit">
-    </div>
-	</form>
-
-        <p class="lead">All answers are anonymous.</p>
-      </div>
-
-    </div><!-- /.container -->
 
 
     <!-- Bootstrap core JavaScript
