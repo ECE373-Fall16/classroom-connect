@@ -1,0 +1,125 @@
+.starter-template {
+  padding: 40px 15px;
+  text-align: left;
+}
+h3{
+ padding-bottom: 2px;
+}
+.joinButton{
+ padding-top: 40px;
+ padding-bottom: 20px;
+}
+.submitButton{
+ padding-bottom: 5px;
+}
+.home_body{
+
+  text-align: center;
+  padding-top: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.join_body{
+text-align: center;
+}
+.create_body{
+  text-align: center;
+  padding-top: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.student_body{
+  text-align: center;
+  padding-top: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.form{
+  text-align: center;
+  left:80px;
+}
+.button{
+  border: none;
+   color: white;
+   text-align: center;
+   text-decoration: none;
+   display: inline-block;
+   font-size: 16px;
+   cursor: pointer;
+}
+.join_buttons{
+  width: 50%;
+  padding: 20px;
+  background-color: #4CAF50;
+  -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.join_buttons:hover{
+ background-color: #008CBA;
+}
+
+.create_buttons{
+  width: 50%;
+  padding: 20px;
+  background-color: #4CAF50;
+  -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.create_buttons:hover{
+  background-color: #008CBA;
+}
+.buttons_div{
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.home_buttons{
+  width: 50%;
+  padding: 20px;
+  background-color: #4CAF50;
+  -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.home_buttons:hover{
+  background-color: #008CBA;
+}
+.student_input{
+  padding-top: 15px;
+}
+.radio_class{
+  font-size: 14px;
+	position: relative;
+	display: block;
+	margin-bottom: 15px;
+	padding-left: 30px;
+	cursor: pointer;
+}
+.radio_form{
+}
+.student_buttons{
+  width: 50%;
+  padding: 20px;
+  background-color: #4CAF50;
+  -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.student_buttons:hover{
+  background-color: #008CBA;
+}
+input[type=text], select{
+  background-color: #f2f2f2;
+  width: 60%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.create_form{
+  text-align:center;
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  box-sizing: border-box;
+}
