@@ -27,12 +27,98 @@
 
    <script type="text/javascript">
 
-
+     var A = 404;
+     var B = 404;
+     var C = 404;
+     var D = 404;
 	window.onload = function () {
-    var A = <?php echo $resultONE ?>;
-    var B = <?php echo $resultTWO ?>;
-    var C = <?php echo $resultTHREE ?>;
-    var D = <?php echo $resultFOUR ?>;
+    init();
+    
+  }
+/////////////////////////////////////////////////
+var socket;
+
+function init() {
+                      
+  var host = "ws://127.0.0.1:9000/echobot"; // SET THIS TO YOUR SERVER
+  retrieveChartData(true);
+  
+  try {
+    socket = new WebSocket(host);
+    console.log('WebSocket - status '+socket.readyState);
+    socket.onopen    = function(msg) { 
+        console.log("Welcome - status "+this.readyState);               
+    };
+    socket.onmessage = function(msg) { 
+      if(msg.data == 'updatePoll'){
+      retrieveChartData(false);
+      console.log("Received: "+msg.data); 
+    };
+    socket.onclose   = function(msg) { 
+      console.log("Disconnected - status "+this.readyState); 
+    };
+  }
+
+  }
+  catch(ex){ 
+      console.log(ex); 
+  }
+  $("msg").focus();
+}
+
+function retrieveChartData(initFlag){
+  $.ajax({
+    url: "http://localhost:8888/classroom-connect/back_end/getmarkers.php",
+    method:'GET'
+     }).done(function(json) {                     
+        A = json.one;
+        B = json.two;
+        C = json.three;
+        D = json.four;
+        if(initFlag){
+          $('#chartContainer1').remove();
+          $('#canvasDiv').append(" <div id='chartContainer1' style='height:25%; width:49%;float:right' ></div>  ");
+        }
+        renderChart();
+    });
+}
+
+function send(){
+  var txt,msg;
+  txt = $("msg");
+  msg = txt.value;
+  if(!msg) { 
+    alert("Message can not be empty"); 
+    return; 
+  }
+  txt.value="";
+  txt.focus();
+  try { 
+    socket.send(msg); 
+    console.log('Sent: '+msg); 
+  } catch(ex) { 
+    console.log(ex); 
+  }
+}
+function quit(){
+  if (socket != null) {
+    console.log("Goodbye!");
+    socket.close();
+    socket=null;
+  }
+}
+
+function reconnect() {
+  quit();
+  init();
+}
+
+function renderChart(){
+    //alert("A: " + A);
+    // var A = <?php echo $resultONE ?>;
+    // var B = <?php echo $resultTWO ?>;
+    // var C = <?php echo $resultTHREE ?>;
+    // var D = <?php echo $resultFOUR ?>;
     var sum = A+B+C+D;
   var data = [
   {label: "A", y: A},
@@ -120,18 +206,17 @@ var dps = []; // dataPoints
     }
     chart.render();
   };
-
   // generates first set of dataPoints
   updateChart(dataLength);
 
   // update chart after specified time.
   setInterval(function(){updateChart()}, updateInterval);
-  }
-/////////////////////////////////////////////////
+}
+
 	</script>
 	<script type="text/javascript" src="linkedFiles/canvasjs/canvasjs.min.js"></script>
 
-<div>
+<div id="canvasDiv">
      <div id="chartContainer1" style="height:25%; width:49%;float:right" ></div>
      <div id="chartContainer2" style="height:25%; width:49%;"></div>
 </div>
