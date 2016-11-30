@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--add reset, print students, clean up UI-->
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -19,23 +19,15 @@
 
     <!-- Custom styles for this template -->
     <link href="starter-template.css" rel="stylesheet">
-    <link href="main.css" rel="stylesheet" type="text/css" >
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <link href="main.css?v=1.2" rel="stylesheet" type="text/css" >
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript">
     var socket;
     $(document).ready(function(){
       init();
         $('#pollBtn').click(function(){
-            //call the addMarkers.php 
+            //call the addMarkers.php
             //send message via websocket about the update
             sendPollData();
         });
@@ -62,7 +54,7 @@
         }
         //create AJAX data structure
         $.ajax({
-          url: "http://localhost:8888/classroom-connect/back_end/addmarkers.php",
+          url: "../back_end/addmarkers.php",
           method:'POST',
           data: {
             one:one,
@@ -72,38 +64,38 @@
           }
           }).done(function() {
             //send message via websocket
-            try { 
+            try {
               var msg = 'updatePoll';
-              socket.send(msg); 
-              console.log('Sent: '+msg); 
-            } catch(ex) { 
-              log(ex); 
+              socket.send(msg);
+              console.log('Sent: '+msg);
+            } catch(ex) {
+              log(ex);
             }
           });
-        //send Ajax 
+        //send Ajax
     }
 /////////////////FUNCTION LIST////////////////
 
 
-      
+
 
 function init() {
   var host = "ws://127.0.0.1:9000/echobot"; // SET THIS TO YOUR SERVER
   try {
     socket = new WebSocket(host);
     console.log('WebSocket - status '+socket.readyState);
-    socket.onopen    = function(msg) { 
-                 console.log("Welcome - status "+this.readyState); 
+    socket.onopen    = function(msg) {
+                 console.log("Welcome - status "+this.readyState);
                };
-    socket.onmessage = function(msg) { 
-                 console.log("Received: "+msg.data); 
+    socket.onmessage = function(msg) {
+                 console.log("Received: "+msg.data);
                };
-    socket.onclose   = function(msg) { 
-                 console.log("Disconnected - status "+this.readyState); 
+    socket.onclose   = function(msg) {
+                 console.log("Disconnected - status "+this.readyState);
                };
   }
-  catch(ex){ 
-    console.log(ex); 
+  catch(ex){
+    console.log(ex);
   }
   $("msg").focus();
 }
@@ -112,17 +104,17 @@ function send(){
   var txt,msg;
   txt = $("msg");
   msg = txt.value;
-  if(!msg) { 
-    alert("Message can not be empty"); 
-    return; 
+  if(!msg) {
+    alert("Message can not be empty");
+    return;
   }
   txt.value="";
   txt.focus();
-  try { 
-    socket.send(msg); 
-    console.log('Sent: '+msg); 
-  } catch(ex) { 
-    log(ex); 
+  try {
+    socket.send(msg);
+    console.log('Sent: '+msg);
+  } catch(ex) {
+    log(ex);
   }
 }
 function quit(){
@@ -140,9 +132,9 @@ function reconnect() {
     </script>
   </head>
   <body class = "student_body">
-      <div class="starter-template">
+      <div class="understanding"><!--poll_response-->
         <h1>Poll Response</h1>
-        <formx class = "radio_form" action="http://localhost:8888/classroom-connect/back_end/addmarkers.php" method="post">
+        <!--<formx class = "radio_form" action="../back_end/addmarkers.php" method="post">-->
           <div class="radio">
             <label class = "radio_class"><input id="one" type="radio" name="Q1">A</label>
           </div>
@@ -158,21 +150,17 @@ function reconnect() {
           <div>
             <input id="pollBtn" type="button" value="Send Poll Response" class ="button student_buttons">
           </div>
-        </formx>
-        <h1>The lecture is...</h1>
-        <form>
-          <div class="radio">
-            <label ><input type="radio" name="poll">Extremely Confusing</label>
-            <label ><input type="radio" name="poll">Somewhat Confusing</label>
-            <label ><input type="radio" name="poll">Pretty Good</label>
-            <label ><input type="radio" name="poll">Very Good</label>
-          </div>
-          <div>
-          <input type="submit" value="Send your level of understanding" class ="button student_buttons">
         </div>
-	     </form>
-        <p class="lead">All answers are anonymous.</p>
-      </div>
+      <!--  </form>-->
+        <div class ="understanding">
+        <h1>The lecture is...</h1>
+          <input type="button" id = "LBTN1" value="Extremely Confusing" class ="button student_poll2">
+          <input type="button" id = "LBTN2" value="Somewhat Confusing" class ="button student_poll2">
+          <input type="button" id = "LBTN3" value="Pretty Good" class ="button student_poll2">
+          <input type="button" id = "LBTN4" value="Very Good" class ="button student_poll2">
+          <p class="lead">All answers are anonymous.</p>
+        </div>
+
     <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -188,15 +176,12 @@ function reconnect() {
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="home.html">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
-
-
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->

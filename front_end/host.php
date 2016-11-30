@@ -17,9 +17,8 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
-    <link href="main.css" rel="stylesheet" type="text/css" >
+    <link href="/linkedFiles/starter-template.css" rel="stylesheet">
+    <link href="main.css?v=1.1" rel="stylesheet" type="text/css" >
     <?php require '../back_end/getmarkers.php'; ?>
   </head>
   <body>
@@ -33,44 +32,44 @@
      var D = 404;
 	window.onload = function () {
     init();
-    
+
   }
 /////////////////////////////////////////////////
 var socket;
 
 function init() {
-                      
+
   var host = "ws://127.0.0.1:9000/echobot"; // SET THIS TO YOUR SERVER
   retrieveChartData(true);
-  
+
   try {
     socket = new WebSocket(host);
     console.log('WebSocket - status '+socket.readyState);
-    socket.onopen    = function(msg) { 
-        console.log("Welcome - status "+this.readyState);               
+    socket.onopen    = function(msg) {
+        console.log("Welcome - status "+this.readyState);
     };
-    socket.onmessage = function(msg) { 
+    socket.onmessage = function(msg) {
       if(msg.data == 'updatePoll'){
       retrieveChartData(false);
-      console.log("Received: "+msg.data); 
+      console.log("Received: "+msg.data);
     };
-    socket.onclose   = function(msg) { 
-      console.log("Disconnected - status "+this.readyState); 
+    socket.onclose   = function(msg) {
+      console.log("Disconnected - status "+this.readyState);
     };
   }
 
   }
-  catch(ex){ 
-      console.log(ex); 
+  catch(ex){
+      console.log(ex);
   }
   $("msg").focus();
 }
 
 function retrieveChartData(initFlag){
   $.ajax({
-    url: "http://localhost:8888/classroom-connect/back_end/getmarkers.php",
+    url: "../back_end/getmarkers.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
     method:'GET'
-     }).done(function(json) {                     
+     }).done(function(json) {
         A = json.one;
         B = json.two;
         C = json.three;
@@ -87,17 +86,17 @@ function send(){
   var txt,msg;
   txt = $("msg");
   msg = txt.value;
-  if(!msg) { 
-    alert("Message can not be empty"); 
-    return; 
+  if(!msg) {
+    alert("Message can not be empty");
+    return;
   }
   txt.value="";
   txt.focus();
-  try { 
-    socket.send(msg); 
-    console.log('Sent: '+msg); 
-  } catch(ex) { 
-    console.log(ex); 
+  try {
+    socket.send(msg);
+    console.log('Sent: '+msg);
+  } catch(ex) {
+    console.log(ex);
   }
 }
 function quit(){
@@ -216,33 +215,15 @@ var dps = []; // dataPoints
 	</script>
 	<script type="text/javascript" src="linkedFiles/canvasjs/canvasjs.min.js"></script>
 
-<div id="canvasDiv">
+<div class = "chart_class" id="canvasDiv">
      <div id="chartContainer1" style="height:25%; width:49%;float:right" ></div>
      <div id="chartContainer2" style="height:25%; width:49%;"></div>
 </div>
-<button type="reset" value="Reset">Reset</button> <!--fix this later and below stuff-->
-<div>
-	<!--<h1>Some text</h1>-->
+<div class = "below_chart">
+<button class = "button host_reset" type="reset" value="Reset">Reset</button>
+<button class = "button host_reset" type ="button" id="print_button" value ="print">Print</button>
 </div>
-  <!--  <style> erase this later
-      body {
-  padding-top: 80px;
-  padding-left: 20px;
-  padding-right: 20px;
-      }
-      .starter-template {
-  padding: 40px 15px;
-      text-align: left;
 
-     body.radio2{
-     background-color: #4CAF50;
-     }
-     .h1{
-       position:relative;
-     }
-  }
-
-  </style>-->
      <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -261,8 +242,8 @@ var dps = []; // dataPoints
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="home.html">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

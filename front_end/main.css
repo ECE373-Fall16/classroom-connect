@@ -2,6 +2,18 @@
   padding: 40px 15px;
   text-align: left;
 }
+.poll_response{
+}
+.understanding{
+  padding-left: 20%;
+  padding-top: 10px;
+  margin:  auto;
+  width:100%
+}
+.poll_div{
+  margin:  auto;
+  width:90%
+}
 h3{
  padding-bottom: 2px;
 }
@@ -13,11 +25,20 @@ h3{
  padding-bottom: 5px;
 }
 .home_body{
-
-  text-align: center;
   padding-top: 50px;
   padding-left: 20px;
   padding-right: 20px;
+}
+.chart_class{
+  padding-top: 50px;
+  padding-left:0px;
+  padding-right:5px;
+  padding-bottom:1px;
+}
+.below_chart{
+  padding-top:35%;
+  padding-left:50%;
+  position:absolute;
 }
 .join_body{
 text-align: center;
@@ -28,8 +49,10 @@ text-align: center;
   padding-left: 20px;
   padding-right: 20px;
 }
+body{
+  background-image: url("linkedFiles/06.jpg");
+}
 .student_body{
-  text-align: center;
   padding-top: 50px;
   padding-left: 20px;
   padding-right: 20px;
@@ -50,23 +73,33 @@ text-align: center;
 .join_buttons{
   width: 50%;
   padding: 20px;
-  background-color: #4CAF50;
+  background-color: #008CBA;/*#4CAF50; green*/
   -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
 }
+.host_reset{
+  width: 90px;
+  padding: 5px;
+  background-color: #008CBA;/*#4CAF50; green */
+  -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.host_reset:hover{
+  background-color: #4CAF50;
+}
 .join_buttons:hover{
- background-color: #008CBA;
+ background-color: #4CAF50;/*#008CBA; blue*/
 }
 
 .create_buttons{
   width: 50%;
   padding: 20px;
-  background-color: #4CAF50;
+  background-color: #008CBA;/*#4CAF50; green*/
   -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
 }
 .create_buttons:hover{
-  background-color: #008CBA;
+  background-color: #4CAF50;/*#008CBA; blue*/
 }
 .buttons_div{
   padding-top: 20px;
@@ -75,12 +108,12 @@ text-align: center;
 .home_buttons{
   width: 50%;
   padding: 20px;
-  background-color: #4CAF50;
+  background-color: #008CBA;/*#4CAF50; green*/
   -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
 }
 .home_buttons:hover{
-  background-color: #008CBA;
+  background-color: #4CAF50;/*#008CBA; blue*/
 }
 .student_input{
   padding-top: 15px;
@@ -95,15 +128,29 @@ text-align: center;
 }
 .radio_form{
 }
+.student_poll2{
+  width: 20%;
+  padding: 20px;
+  padding-top: 20px;
+  padding-left:20px;
+  padding-right:20px;
+  padding-bottom:20px;
+  background-color: #008CBA;/*#4CAF50; green*/
+  -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.student_poll2:hover{
+  background-color: #4CAF50;/*#008CBA; blue*/
+}
 .student_buttons{
   width: 50%;
   padding: 20px;
-  background-color: #4CAF50;
+  background-color: #008CBA;/*#4CAF50; green*/
   -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
 }
 .student_buttons:hover{
-  background-color: #008CBA;
+  background-color: #4CAF50;/*#008CBA; blue*/
 }
 input[type=text], select{
   background-color: #f2f2f2;
@@ -116,7 +163,7 @@ input[type=text], select{
   box-sizing: border-box;
 }
 .create_form{
-  text-align:center;
+  text-align:left;
   width: 50%;
   padding: 12px 20px;
   margin: 8px 0;

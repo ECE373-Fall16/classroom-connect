@@ -1,5 +1,5 @@
 <?php
-header("Location: http://localhost:8888/classroom-connect/front_end/student.html"); //redirects page back to index.html as blunt refresh
+header("Location: ../front_end/student.html"); //redirects page back to index.html as blunt refresh
 /*
 add markers to db
 */
@@ -13,7 +13,7 @@ add markers to db
   if (mysqli_connect_error()) {
     die('Connect Error ('.mysqli_connect_errno().') '.mysqli_connect_error());
   }
-	
+
 	$stmt = $mysqli->prepare("INSERT INTO MARKER(marker_id) VALUES (?)");
   if($_POST['one']=='on'){
     $value = 1;
@@ -32,6 +32,11 @@ add markers to db
     $stmt->bind_param("i", $value);
     $stmt->execute();
   }
-  
+/*  elseif($_POST['LBTN1']=='on'){
+    $value = -10;
+    $stmt->bind_param("i", $value);
+    $stmt->execute();
+  }*/
+
   	$mysqli->close();
 ?>
