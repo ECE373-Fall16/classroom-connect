@@ -1,4 +1,5 @@
 <?php
+session_start();
 //header('Content-Type: application/json'); //required to send JSON
   /*
     Execute querry based on specific POST key
@@ -34,6 +35,7 @@
          $stmt = $mysqli->prepare("INSERT INTO CLASSES(class_name, poll_id) VALUES (?,?)");
          $stmt->bind_param("si", $_POST['className'], $_POST['classNumber']);
          $stmt->execute();
+         $_SESSION["CURRENTCLASS"] = $_POST['classNumber']; //make classnumber in the session
      
   		}elseif ($_POST['CHECK'] == 'check') {
          //check if exists first
@@ -58,6 +60,13 @@
   			//if email does exist in directory, then update user's class id.
 			$stmt = $mysqli->prepare("INSERT INTO USERS(email, poll_id) VALUES(?,?) ON DUPLICATE KEY UPDATE poll_id=?");
 			$stmt->bind_param("sii",$_POST['email'],$_POST['classNumber'],$_POST['classNumber']);
+			$stmt->execute();
+			$_SESSION["STUDENTCLASSNUMBER"] = $_POST['classNumber']; //make correlate student to poll
+
+  		}elseif ($_POST['BUTTONPRESSED'] =='resetPoll'){
+  			//delete markers from specified poll
+  			$stmt = $mysqli->prepare("DELETE FROM MARKERS WHERE class_id=?");
+  			$stmt->bind_param("i",$_POST['CLASSNUMBER']);
 			$stmt->execute();
   		}
   	//}

@@ -1,3 +1,4 @@
+<?php session_start(); ?> 
 <!DOCTYPE html>
 
 <html>
@@ -19,6 +20,8 @@
 
     <link href="/linkedFiles/starter-template.css" rel="stylesheet">
     <link href="main.css?v=1.1" rel="stylesheet" type="text/css" >
+    <!-- JQuery & AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <?php require '../back_end/getmarkers.php'; ?>
   </head>
   <body>
@@ -30,10 +33,16 @@
      var B = 404;
      var C = 404;
      var D = 404;
-	window.onload = function () {
+     
+	$(document).ready(function(){
+    
     init();
+    $('#btnRESET').click(function(){
+        resetPoll();
+    });
 
-  }
+  });
+
 /////////////////////////////////////////////////
 var socket;
 
@@ -65,10 +74,32 @@ function init() {
   $("msg").focus();
 }
 
+function resetPoll(){
+  var BUTTONPRESSED = 'resetPoll';
+  var classnumber = <?php echo $_SESSION['CURRENTCLASS']; ?>;
+  $.ajax({
+    url: "../back_end/sqlConnection.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
+    method:'POST',
+    data: {
+        BUTTONPRESSED:BUTTONPRESSED,
+        CLASSNUMBER: classnumber
+    }
+     }).done(function(json) {
+       
+    
+    });
+     alert('Poll Reset');
+     retrieveChartData(false);
+}
+
 function retrieveChartData(initFlag){
+  var currentClass = <?php echo $_SESSION['CURRENTCLASS'];?>;
   $.ajax({
     url: "../back_end/getmarkers.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
-    method:'GET'
+    method:'GET',
+    data: {
+        CLASSNUMBER:currentClass
+    }
      }).done(function(json) {
         A = json.one;
         B = json.two;
@@ -79,6 +110,7 @@ function retrieveChartData(initFlag){
           $('#canvasDiv').append(" <div id='chartContainer1' style='height:25%; width:49%;float:right' ></div>  ");
         }
         renderChart();
+    
     });
 }
 
@@ -220,8 +252,8 @@ var dps = []; // dataPoints
      <div id="chartContainer2" style="height:25%; width:49%;"></div>
 </div>
 <div class = "below_chart">
-<button class = "button host_reset" type="reset" value="Reset">Reset</button>
-<button class = "button host_reset" type ="button" id="print_button" value ="print">Print</button>
+<button id="btnRESET" class = "button host_reset" type="button">Reset</button>
+<button id="btnPRINT" class = "button host_reset" type ="button" id="print_button" value ="print">Print</button>
 </div>
 
      <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -262,7 +294,7 @@ var dps = []; // dataPoints
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
 </body>
 <footer>
-  <p>ClassRoom Connect</p>
+  <p>ClassRoom Connect <?php echo $_SESSION['CURRENTCLASS'] ?></p>
 </footer>
 
 </html>

@@ -1,5 +1,7 @@
 <?php
+
 header('Content-Type: application/json'); //required to send JSON
+session_start();
   /*
     Execute querry based on specific POST key
   */
