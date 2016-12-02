@@ -17,6 +17,120 @@
     <!-- Custom styles for this template -->
     <link href="starter-template.css" rel="stylesheet">
     <link href="main.css" rel="stylesheet" type="text/css" >
+    <!-- JQuery & AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- JQuery Functions & Websocket -->
+    <script type="text/javascript">
+        var socket;
+        $(document).ready(function(){
+          init();
+          $('#JoinClass').click(function(){
+                if($('#Email').val() == ''){
+                    alert("Please provide an email");
+                }else{
+                    getClassData();    
+                }     
+              
+          });
+        });
+
+        function getClassData(){
+          //collect data from fields
+          var BUTTONPRESSED = 'addOrUpdateUser';
+          var email = $('#Email').val();
+          var classNumber = $('#ClassNumber').val();
+            //create AJAX data structure
+            $.ajax({  
+              url: "../back_end/sqlConnectionGET.php",
+              method:'GET',
+              data: {
+                CHECK:'check',
+                classNumber:classNumber
+              }
+               }).done(function(json) {
+                  var result;
+                  result = json.one;
+                  console.log(result + ' <-----');
+                  if(result!=0){ //class does not exist
+                    $.ajax({
+                      url: "../back_end/sqlConnection.php",
+                      method:'POST',
+                      data: {
+                        BUTTONPRESSED:BUTTONPRESSED,
+                        email:email,
+                        classNumber:classNumber
+                      }
+                    }).done(function(){
+                      //send message via websocket
+                      try { 
+                            var msg = 'UPDATEUSER';
+                            socket.send(msg); 
+                            console.log('Sent: '+msg); 
+                            window.open("http://localhost:8888/front_end/student.html", "_self");
+                          } catch(ex) { 
+                            log(ex); 
+                          }
+                    });
+                  }else{
+                    alert("The classroom ID "+ classNumber+" does not exist!");
+                  }
+              });
+            
+
+          }
+
+          function init() {
+            var host = "ws://127.0.0.1:9000/echobot"; // SET THIS TO YOUR SERVER
+            try {
+              socket = new WebSocket(host);
+              console.log('WebSocket - status '+socket.readyState);
+              socket.onopen    = function(msg) { 
+                           console.log("Welcome - status "+this.readyState); 
+                         };
+              socket.onmessage = function(msg) { 
+                           console.log("Received: "+msg.data); 
+                         };
+              socket.onclose   = function(msg) { 
+                           console.log("Disconnected - status "+this.readyState); 
+                         };
+            }
+            catch(ex){ 
+              console.log(ex); 
+            }
+            $("msg").focus();
+          }
+
+          function send(){
+            var txt,msg;
+            txt = $("msg");
+            msg = txt.value;
+            if(!msg) { 
+              alert("Message can not be empty"); 
+              return; 
+            }
+            txt.value="";
+            txt.focus();
+            try { 
+              socket.send(msg); 
+              console.log('Sent: '+msg); 
+            } catch(ex) { 
+              log(ex); 
+            }
+          }
+
+          function quit(){
+            if (socket != null) {
+              console.log("Goodbye!");
+              socket.close();
+              socket=null;
+            }
+          }
+
+          function reconnect() {
+            quit();
+            init();
+          }
+    </script>
   </head>
   <body class = "join_body">
 <p1>Please enter in your email and class ID #:</p1>
@@ -27,11 +141,11 @@
 onsubmit="return check_if_empty()">
 
   <h3>Email:</h3>
-  <input type="text" name="email">
+  <input id="Email" type="text" name="email" placeholder="Email">
   <h3>Class ID #</h3>
-   <input type="text" name="IDNum">
+   <input id="ClassNumber" type="text" name="IDNum" placeholder="Class Number">
    <div class = "buttons_div">
-   <button type="submit" class = "button join_buttons" value="start">Start</button>
+   <button id="JoinClass" type="button" class = "button join_buttons">Start</button>
   </div>
   <div class = "buttons_div">
    <button type="button" class = "button join_buttons" onclick="window.location.href='home.html'"value="create">Cancel</button>

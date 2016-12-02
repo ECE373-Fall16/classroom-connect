@@ -1,5 +1,5 @@
 <?php
-
+//header('Content-Type: application/json'); //required to send JSON
   /*
     Execute querry based on specific POST key
   */
@@ -45,13 +45,20 @@
           $jsonArray['checkResult']= $inTable;
           echo json_encode($jsonArray);
           
-      }elseif ($_POST['BUTTONPRESSED'] == 'deleteAll') {
+      	}elseif ($_POST['BUTTONPRESSED'] == 'deleteAll') {
   			/*
 				CREATE CLASS
   			*/
 			$stmt = $mysqli->prepare("DELETE FROM USERS");
 			$stmt->execute();
 
+  		}elseif ($_POST['BUTTONPRESSED'] == 'addOrUpdateUser') {
+  			
+  			//If email dosn't exist in directory, then create user only based on email and class id.
+  			//if email does exist in directory, then update user's class id.
+			$stmt = $mysqli->prepare("INSERT INTO USERS(email, poll_id) VALUES(?,?) ON DUPLICATE KEY UPDATE poll_id=?");
+			$stmt->bind_param("sii",$_POST['email'],$_POST['classNumber'],$_POST['classNumber']);
+			$stmt->execute();
   		}
   	//}
 	$mysqli->close();

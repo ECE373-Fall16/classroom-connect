@@ -26,8 +26,6 @@ header('Content-Type: application/json'); //required to send JSON
                //echo $resultONE; 
            }
           $jsonArray['one']= $inTable;
-         
-          
       }
   
 	$mysqli->close();
