@@ -26,41 +26,85 @@
     var socket;
     $(document).ready(function(){
       init();
+      getData();
         $('#pollBtn').click(function(){
             //call the addMarkers.php
             //send message via websocket about the update
-            sendPollData();
+            var input = $('input[name=Q1]:checked').val();
+            sendPollData(input);
+        });
+        $("input[id^='LBTN']").click(function(){ // determines the opinion of student
+            sendUnderstandingData(this.id);
         });
 
     });
+    function sendUnderstandingData(data){
+        var understandingValue = 0;
+        switch(data){
+              case 'LBTN1': //EXTREMELY CONFUSING
+                  understandingValue = -10;
+                  break;
+              case 'LBTN2': //SOMEWHAT CONFUSING
+                  understandingValue = -5;
+                  break;
+              case 'LBTN3': //PRETTY GOOD
+                  understandingValue = 5;
+                  break;
+              case 'LBTN4': //VERY GOOD
+                  understandingValue = 10;
+                  break;
+              default:
+                  alert("Error With Input");
+            }
+            //create AJAX data structure
+        $.ajax({
+          url: "../back_end/sqlConnection.php",
+          method:'POST',
+          data: {
+              BUTTONPRESSED:'sendUnderstandingData',
+              VALUE:understandingValue
+          }
+          }).done(function() {
+            //send message via websocket
+            try {
+              var msg = 'SEND UNDERSTANDING VAL';
+              socket.send(msg);
+              console.log('Sent: '+msg);
+            } catch(ex) {
+              log(ex);
+            }
+          });
 
-    function sendPollData(){
+    }
+    function sendPollData(input){
         //collect data from fields
-        var one = $('#one:checked').val();
-        if(one == undefined){
-            one = '';
-        }
-        var two = $('#two:checked').val();
-        if(two == undefined){
-            two = '';
-        }
-        var three = $('#three:checked').val();
-        if(three == undefined){
-            three = '';
-        }
-        var four = $('#four:checked').val();
-        if(four == undefined){
-            four = '';
+        var value = 0;
+        switch(input){
+          case 'A':
+              value = 1;
+              break;
+          case 'B':
+              value = 2;
+              break;
+          case 'C':
+              value = 3;
+              break;
+          case 'D':
+              value = 4;
+              break;
+          default:
+              value = -1;
         }
         //create AJAX data structure
         $.ajax({
           url: "../back_end/addmarkers.php",
           method:'POST',
           data: {
-            one:one,
-            two:two,
-            three:three,
-            four:four
+            // one:one,
+            // two:two,
+            // three:three,
+            // four:four
+            MARKERVAL:value
           }
           }).done(function() {
             //send message via websocket
@@ -73,6 +117,19 @@
             }
           });
         //send Ajax
+    }
+    function getData(){
+      $.ajax({
+          url: "../back_end/sqlConnectionGET.php",
+          method:'GET',
+          data: {
+           CHECK:'getUserData'
+          }
+          }).done(function(json) {
+            //send message via websocket
+              $('#classNumberView').text(json.class);
+              $('#userEmailView').text(json.email);
+          });
     }
 /////////////////FUNCTION LIST////////////////
 
@@ -133,19 +190,21 @@ function reconnect() {
   </head>
   <body class = "student_body">
       <div class="understanding"><!--poll_response-->
+        <div><h3>Class Number:<p id="classNumberView"></p></h3></div>
+        <div><h3>Email:<p id="userEmailView"></p></h3></div>
         <h1>Poll Response</h1>
         <!--<formx class = "radio_form" action="../back_end/addmarkers.php" method="post">-->
           <div class="radio">
-            <label class = "radio_class"><input id="one" type="radio" name="Q1">A</label>
+            <label class = "radio_class"><input id="one" type="radio" name="Q1" value="A">A</input></label>
           </div>
           <div class="radio">
-            <label class = "radio_class"><input id="two" type="radio" name="Q1">B</label>
+            <label class = "radio_class"><input id="two" type="radio" name="Q1" value="B">B</input></label>
           </div>
           <div class="radio">
-            <label class = "radio_class"><input id="three" type="radio" name="Q1">C</label>
+            <label class = "radio_class"><input id="three" type="radio" name="Q1" value="C">C</input></label>
           </div>
           <div class="radio">
-            <label class = "radio_class"><input id="four" type="radio" name="Q1">D</label>
+            <label class = "radio_class"><input id="four" type="radio" name="Q1" value="D">D</input></label>
           </div>
           <div>
             <input id="pollBtn" type="button" value="Send Poll Response" class ="button student_buttons">
@@ -154,11 +213,11 @@ function reconnect() {
       <!--  </form>-->
         <div class ="understanding">
         <h1>The lecture is...</h1>
-          <input type="button" id = "LBTN1" value="Extremely Confusing" class ="button student_poll2">
-          <input type="button" id = "LBTN2" value="Somewhat Confusing" class ="button student_poll2">
-          <input type="button" id = "LBTN3" value="Pretty Good" class ="button student_poll2">
-          <input type="button" id = "LBTN4" value="Very Good" class ="button student_poll2">
-          <p class="lead">All answers are anonymous.</p>
+          <input type="button" id = "LBTN1" name="opinion" value="Extremely Confusing" class ="button student_poll2">
+          <input type="button" id = "LBTN2" name="opinion" value="Somewhat Confusing" class ="button student_poll2">
+          <input type="button" id = "LBTN3" name="opinion" value="Pretty Good" class ="button student_poll2">
+          <input type="button" id = "LBTN4" name="opinion" value="Very Good" class ="button student_poll2">
+          <p class="lead">All answers are anonymous...Potentially</p>
         </div>
 
     <nav class="navbar navbar-inverse navbar-fixed-top">
