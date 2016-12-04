@@ -24,7 +24,7 @@ runs querry to obtain all markers from the querry
     die('Connect Error ('.mysqli_connect_errno().') '.mysqli_connect_error());
   }
   
-  $stmt = $mysqli->prepare("SELECT COUNT(*) FROM MARKERS WHERE marker_id = 4 AND class_id = ?");
+  $stmt = $mysqli->prepare("SELECT COUNT(*) FROM POLL WHERE marker_id = 4 AND class_id = ?");
     $stmt->bind_param('i', $_GET['CLASSNUMBER']);
     $stmt->execute();
     /* bind result variables */
@@ -34,7 +34,7 @@ runs querry to obtain all markers from the querry
          //echo $resultFOUR; 
      }
 ////////////////////
-  $stmt = $mysqli->prepare("SELECT COUNT(*) FROM MARKERS WHERE marker_id = 3 AND class_id = ?");
+  $stmt = $mysqli->prepare("SELECT COUNT(*) FROM POLL WHERE marker_id = 3 AND class_id = ?");
   $stmt->bind_param('i', $_GET['CLASSNUMBER']);
     $stmt->execute();
     /* bind result variables */
@@ -44,7 +44,7 @@ runs querry to obtain all markers from the querry
          //echo $resultTHREE; 
      }
 ////////////////////
-  $stmt = $mysqli->prepare("SELECT COUNT(*) FROM MARKERS WHERE marker_id = 2 AND class_id = ?");
+  $stmt = $mysqli->prepare("SELECT COUNT(*) FROM POLL WHERE marker_id = 2 AND class_id = ?");
   $stmt->bind_param('i', $_GET['CLASSNUMBER']);
     $stmt->execute();
 
@@ -55,7 +55,7 @@ runs querry to obtain all markers from the querry
          //echo $resultTWO; 
      }
 ////////////////////
-     $stmt = $mysqli->prepare("SELECT COUNT(*) FROM MARKERS WHERE marker_id = 1 AND class_id = ?");
+     $stmt = $mysqli->prepare("SELECT COUNT(*) FROM POLL WHERE marker_id = 1 AND class_id = ?");
      $stmt->bind_param('i', $_GET['CLASSNUMBER']);
     $stmt->execute();
     /* bind result variables */

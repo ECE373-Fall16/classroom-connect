@@ -62,11 +62,18 @@ session_start();
 			$stmt->bind_param("sii",$_POST['email'],$_POST['classNumber'],$_POST['classNumber']);
 			$stmt->execute();
 			$_SESSION["STUDENTCLASSNUMBER"] = $_POST['classNumber']; //make correlate student to poll
+			$_SESSION["STUDENTEMAIL"] = $_POST['email']; //make correlate student to poll
 
   		}elseif ($_POST['BUTTONPRESSED'] =='resetPoll'){
   			//delete markers from specified poll
-  			$stmt = $mysqli->prepare("DELETE FROM MARKERS WHERE class_id=?");
+  			//$stmt = $mysqli->prepare("DELETE FROM POLL WHERE class_id=?");
+  			$stmt = $mysqli->prepare("UPDATE POLL SET marker_id=0 WHERE class_id=?");
   			$stmt->bind_param("i",$_POST['CLASSNUMBER']);
+			$stmt->execute();
+
+  		}elseif ($_POST['BUTTONPRESSED'] =='sendUnderstandingData'){ //send student understanding value to db
+			$stmt = $mysqli->prepare("INSERT INTO MARKERS(marker_id,email,class_id) VALUES(?,?,?) ON DUPLICATE KEY UPDATE marker_id=?, class_id=?");
+			$stmt->bind_param("isiii",$_POST['VALUE'],$_SESSION["STUDENTEMAIL"],$_SESSION["STUDENTCLASSNUMBER"],$_POST['VALUE'],$_SESSION["STUDENTCLASSNUMBER"]);
 			$stmt->execute();
   		}
   	//}

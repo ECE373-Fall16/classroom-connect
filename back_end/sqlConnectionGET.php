@@ -1,5 +1,4 @@
 <?php
-
 header('Content-Type: application/json'); //required to send JSON
 session_start();
   /*
@@ -28,6 +27,22 @@ session_start();
                //echo $resultONE; 
            }
           $jsonArray['one']= $inTable;
+      }elseif ($_GET['CHECK'] == 'getUnderstandingData') {
+        //query for values where the time is roughtly 1 minute
+        $now = 'NOW()'; 
+        $duration = 'NOW()-500'; 
+        $stmt = $mysqli->prepare("SELECT SUM(marker_id) FROM MARKERS WHERE (class_id = 373) ");
+        $stmt->execute();
+        //SELECT SUM(marker_id) FROM MARKERS WHERE (class_id = 373) AND (time_created <= NOW()) AND (time_created >= (NOW()-3600))
+        //$stmt->bind_param("iii", $_GET['CLASSNUMBER'], $now, $duration);
+        $stmt->bind_result($inTable);
+          while ($stmt->fetch()) {
+               //echo $resultONE; 
+           }
+          $jsonArray['one']= $inTable;
+      }elseif($_GET['CHECK'] == 'getUserData'){
+        $jsonArray['email']=$_SESSION['STUDENTEMAIL'];
+        $jsonArray['class']=$_SESSION['STUDENTCLASSNUMBER'];
       }
   
 	$mysqli->close();

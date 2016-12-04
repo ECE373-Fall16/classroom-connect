@@ -15,29 +15,10 @@ add markers to db
     die('Connect Error ('.mysqli_connect_errno().') '.mysqli_connect_error());
   }
 
-	$stmt = $mysqli->prepare("INSERT INTO MARKERS(marker_id,class_id) VALUES (?,?)");
-  if($_POST['one']=='on'){
-    $value = 1;
-    $stmt->bind_param("ii", $value, $_SESSION["STUDENTCLASSNUMBER"]);
-    $stmt->execute();
-  }elseif($_POST['two']=='on'){
-    $value = 2;
-    $stmt->bind_param("ii", $value, $_SESSION["STUDENTCLASSNUMBER"]);
-    $stmt->execute();
-  }elseif($_POST['three']=='on'){
-    $value = 3;
-    $stmt->bind_param("ii", $value, $_SESSION["STUDENTCLASSNUMBER"]);
-    $stmt->execute();
-  }elseif($_POST['four']=='on'){
-    $value = 4;
-    $stmt->bind_param("ii", $value, $_SESSION["STUDENTCLASSNUMBER"]);
-    $stmt->execute();
-  }
-/*  elseif($_POST['LBTN1']=='on'){
-    $value = -10;
-    $stmt->bind_param("i", $value);
-    $stmt->execute();
-  }*/
+	$stmt = $mysqli->prepare("INSERT INTO POLL(marker_id,email,class_id) VALUES (?,?,?) ON DUPLICATE KEY UPDATE marker_id=?,class_id=?");
+  $stmt->bind_param("isiii",$_POST['MARKERVAL'],$_SESSION["STUDENTEMAIL"],$_SESSION["STUDENTCLASSNUMBER"],$_POST['MARKERVAL'],$_SESSION["STUDENTCLASSNUMBER"]);
+  $stmt->execute();
+  
 
   	$mysqli->close();
 ?>
