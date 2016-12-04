@@ -1,3 +1,4 @@
+<?php session_start(); ?> 
 <!DOCTYPE html>
 
 <html>
@@ -19,6 +20,9 @@
 
     <link href="/linkedFiles/starter-template.css" rel="stylesheet">
     <link href="main.css?v=1.1" rel="stylesheet" type="text/css" >
+    <!-- JQuery & AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="http://www.chartjs.org/assets/Chart.min.js"></script>
     <?php require '../back_end/getmarkers.php'; ?>
   </head>
   <body>
@@ -30,13 +34,24 @@
      var B = 404;
      var C = 404;
      var D = 404;
-	window.onload = function () {
+     var ctx;
+	$(document).ready(function(){
+    
     init();
+    makeChart();
+    
+    $('#btnRESET').click(function(){
+        resetPoll();
+    });
+    $('#btnPRINT').click(function(){
+      alert('printing...');
+    });
 
-  }
+  });
+
 /////////////////////////////////////////////////
 var socket;
-
+var sumUnderstanding;
 function init() {
 
   var host = "ws://127.0.0.1:9000/echobot"; // SET THIS TO YOUR SERVER
@@ -65,10 +80,32 @@ function init() {
   $("msg").focus();
 }
 
+function resetPoll(){
+  var BUTTONPRESSED = 'resetPoll';
+  var classnumber = <?php echo $_SESSION['CURRENTCLASS']; ?>;
+  $.ajax({
+    url: "../back_end/sqlConnection.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
+    method:'POST',
+    data: {
+        BUTTONPRESSED:BUTTONPRESSED,
+        CLASSNUMBER: classnumber
+    }
+     }).done(function(json) {
+       
+    
+    });
+     alert('Poll Reset');
+     retrieveChartData(false);
+}
+
 function retrieveChartData(initFlag){
+  var currentClass = <?php echo $_SESSION['CURRENTCLASS'];?>;
   $.ajax({
     url: "../back_end/getmarkers.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
-    method:'GET'
+    method:'GET',
+    data: {
+        CLASSNUMBER:currentClass
+    }
      }).done(function(json) {
         A = json.one;
         B = json.two;
@@ -79,6 +116,7 @@ function retrieveChartData(initFlag){
           $('#canvasDiv').append(" <div id='chartContainer1' style='height:25%; width:49%;float:right' ></div>  ");
         }
         renderChart();
+    
     });
 }
 
@@ -113,11 +151,6 @@ function reconnect() {
 }
 
 function renderChart(){
-    //alert("A: " + A);
-    // var A = <?php echo $resultONE ?>;
-    // var B = <?php echo $resultTWO ?>;
-    // var C = <?php echo $resultTHREE ?>;
-    // var D = <?php echo $resultFOUR ?>;
     var sum = A+B+C+D;
   var data = [
   {label: "A", y: A},
@@ -160,68 +193,134 @@ var chart = new CanvasJS.Chart("chartContainer1",
     // update chart after specified interval
     setInterval(function(){updateChart()}, updateInterval);
 
-var dps = []; // dataPoints
+// var dps = []; // dataPoints
 
-  var chart = new CanvasJS.Chart("chartContainer2",{
-   //live update chart
-    theme: "theme3",
-    title :{
-      text: "Student Understanding"
-                        },
-               axisY:{
-                    //title: "Primary Y Axis",
-                    },
-        //////////////
-    data: [{
-      type: "line",
-      dataPoints: dps
-    }]
-  });
+//   var chart = new CanvasJS.Chart("chartContainer2",{
+//    //live update chart
+//     theme: "theme3",
+//     title :{
+//       text: "Student Understanding"
+//                         },
+//                axisY:{
+//                     //title: "Primary Y Axis",
+//                     },
+//         //////////////
+//     data: [{
+//       type: "scatter",
+//       dataPoints: dps
+//     }]
+//   });
 
-  var xVal = 0;
-  var yVal = 0;
-  var updateInterval = 100;
-  var dataLength = 500; // number of dataPoints visible at any point
+//   var xVal = 0;
+//   var yVal = 0;
+//   var updateInterval = 500;
+//   var dataLength = 100; // number of dataPoints visible at any point
+  
+//   var updateChart = function (count) {
+//     count = count || 1;
+//     // count is number of times loop runs to generate random dataPoints.
+//   //  backgroundColor:"#F5DEB3";
+//     for (var j = 0; j < count; j++) {
+//             getUnderstandingData();
+            
+//             //yVal = yVal +  (1/5)*(Math.round(5 + Math.random() *(-5-5)));
+//             //yVal = yVal + sumUnderstanding + 10;
+            
+//             //yVal = yVal +Math.round(Math.random() *(-1-1));
+//             //http://jsbin.com/yitep/5/edit?html,js,output todo look into
+//             if(yVal<0){}
+//             //if(yVal>0){document.body.style.backgroundColor = "green";}
+//       dps.push({
+//         x: xVal,
+//         y: sumUnderstanding
+//       });
+//       xVal++;
+//     };
+//     if (dps.length > dataLength)
+//     {
+//       dps.shift();
+//     }
+//     chart.render();
+//   };
+//   // generates first set of dataPoints
+//   updateChart(dataLength);
 
-  var updateChart = function (count) {
-    count = count || 1;
-    // count is number of times loop runs to generate random dataPoints.
-  //  backgroundColor:"#F5DEB3";
-    for (var j = 0; j < count; j++) {
-            yVal = yVal +  (1/5)*(Math.round(5 + Math.random() *(-5-5)));
-            //yVal = yVal +Math.round(Math.random() *(-1-1));
-            //yVal = yVal/2;
-            if(yVal<0){}
-            //if(yVal>0){document.body.style.backgroundColor = "green";}
-      dps.push({
-        x: xVal,
-        y: yVal
-      });
-      xVal++;
-    };
-    if (dps.length > dataLength)
-    {
-      dps.shift();
+//   // update chart after specified time.
+//   setInterval(function(){updateChart()}, updateInterval);
+}
+function makeChart(){
+      var canvas = document.getElementById('updating-chart'),
+     ctx = canvas.getContext('2d'),
+    startingData = {
+      labels: [1, 2, 3, 4, 5, 6, 7],
+      datasets: [
+          
+                {
+                    fillColor: "rgba(151,187,205,0.2)",
+                    strokeColor: "rgba(151,187,205,1)",
+                    pointColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    data: [0, 0, 0, 0, 0, 0, 0]
+                }
+            ]
+          },
+          latestLabel = startingData.labels[6];
+
+      // Reduce the animation steps for demo clarity.
+      var myLiveChart = new Chart(ctx).Line(startingData, {animationSteps: 15});
+
+
+      setInterval(function(){
+      var currentClass = <?php echo $_SESSION['CURRENTCLASS'];?>;
+        $.ajax({
+          url: "../back_end/sqlConnectionGET.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
+          method:'GET',
+          data: {
+              CHECK: 'getUnderstandingData',
+              CLASSNUMBER:currentClass,
+          }
+           }).done(function(json) {
+           //alert(json.one + " me!");
+            //return json.one;
+           // Add two random numbers for each dataset
+        myLiveChart.addData([json.one], ++latestLabel);
+        // Remove the first point so we dont just add values forever
+        myLiveChart.removeData();
+          });
+        
+      }, 2000);
+}
+
+function getUnderstandingData(){
+  var currentClass = <?php echo $_SESSION['CURRENTCLASS'];?>;
+  $.ajax({
+    url: "../back_end/sqlConnectionGET.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
+    method:'GET',
+    data: {
+        CHECK: 'getUnderstandingData',
+        CLASSNUMBER:currentClass,
     }
-    chart.render();
-  };
-  // generates first set of dataPoints
-  updateChart(dataLength);
+     }).done(function(json) {
+     alert(json.one + " me!");
+      return json.one;
+     
+    });
+      
 
-  // update chart after specified time.
-  setInterval(function(){updateChart()}, updateInterval);
 }
 
 	</script>
+  
 	<script type="text/javascript" src="linkedFiles/canvasjs/canvasjs.min.js"></script>
 
 <div class = "chart_class" id="canvasDiv">
      <div id="chartContainer1" style="height:25%; width:49%;float:right" ></div>
-     <div id="chartContainer2" style="height:25%; width:49%;"></div>
+     <!-- <div id="chartContainer2" style="height:25%; width:49%;"></div> -->
+     <canvas id="updating-chart" width="500" height="300"></canvas>
 </div>
 <div class = "below_chart">
-<button class = "button host_reset" type="reset" value="Reset">Reset</button>
-<button class = "button host_reset" type ="button" id="print_button" value ="print">Print</button>
+<button id="btnRESET" class = "button host_reset" type="button">Reset</button>
+<button id="btnPRINT" class = "button host_reset" type ="button" id="print_button" value ="print">Print</button>
 </div>
 
      <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -260,9 +359,10 @@ var dps = []; // dataPoints
     <script src="../../dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    
 </body>
 <footer>
-  <p>ClassRoom Connect</p>
+  <p>ClassRoom Connect <?php echo $_SESSION['CURRENTCLASS'] ?></p>
 </footer>
 
 </html>
