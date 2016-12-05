@@ -29,15 +29,20 @@ session_start();
           $jsonArray['one']= $inTable;
       }elseif ($_GET['CHECK'] == 'getUnderstandingData') {
         //query for values where the time is roughtly 1 minute
-        $now = 'NOW()'; 
-        $duration = 'NOW()-500'; 
-        $stmt = $mysqli->prepare("SELECT SUM(marker_id) FROM MARKERS WHERE (class_id = 373)");
+        $timeBound = time()-20; 
+
+        //$duration = 'NOW()-5000'; 
+        $now = date('Y-m-d H:i:s', time());
+        $duration = date('Y-m-d H:i:s', $timeBound);
+        $stmt = $mysqli->prepare("SELECT SUM(marker_id) FROM MARKERS WHERE (class_id = ?) AND (time_created > DATE_SUB(NOW(), INTERVAL 1 MINUTE))");
+        $stmt->bind_param('i',$_GET['CLASSNUMBER']);
         $stmt->execute();
-        //SELECT SUM(marker_id) FROM MARKERS WHERE (class_id = 373) AND (time_created <= NOW()) AND (time_created >= (NOW()-3600))
-        //$stmt->bind_param("iii", $_GET['CLASSNUMBER'], $now, $duration);
         $stmt->bind_result($inTable);
           while ($stmt->fetch()) {
                //echo $resultONE; 
+           }
+           if($inTable == null){
+           	$inTable = -1;
            }
           $jsonArray['one']= $inTable;
       }elseif($_GET['CHECK'] == 'getUserData'){
