@@ -1,0 +1,254 @@
+<!--add reset, print students, clean up UI-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>ClassRoom Connect</title>
+
+    <!-- Bootstrap core CSS -->
+   <link href="linkedFiles/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+   <link href="main.css" rel="stylesheet" type="text/css" >
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="starter-template.css" rel="stylesheet">
+    <link href="main.css?v=1.2" rel="stylesheet" type="text/css" >
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    var socket;
+    $(document).ready(function(){
+      init();
+      getData();
+        $('#pollBtn').click(function(){
+            //call the addMarkers.php
+            //send message via websocket about the update
+            var input = $('input[name=Q1]:checked').val();
+            sendPollData(input);
+        });
+        $("input[id^='LBTN']").click(function(){ // determines the opinion of student
+            sendUnderstandingData(this.id);
+        });
+
+    });
+    function sendUnderstandingData(data){
+        var understandingValue = 0;
+        
+        switch(data){
+              case 'LBTN1': //EXTREMELY CONFUSING
+                  understandingValue = -10;
+                  break;
+              case 'LBTN2': //SOMEWHAT CONFUSING
+                  understandingValue = -5;
+                  break;
+              case 'LBTN3': //PRETTY GOOD
+                  understandingValue = 5;
+                  break;
+              case 'LBTN4': //VERY GOOD
+                  understandingValue = 10;
+                  break;
+              default:
+                  alert("Error With Input");
+            }
+            //create AJAX data structure
+        $.ajax({
+          url: "../back_end/sqlConnection.php",
+          method:'POST',
+          data: {
+              BUTTONPRESSED:'sendUnderstandingData',
+              VALUE:understandingValue
+          }
+          }).done(function() {
+            //send message via websocket
+            try {
+              var msg = 'SEND UNDERSTANDING VAL';
+              socket.send(msg);
+              console.log('Sent: '+msg);
+            } catch(ex) {
+              log(ex);
+            }
+          });
+
+    }
+    function sendPollData(input){
+        //collect data from fields
+        var value = 0;
+        switch(input){
+          case 'A':
+              value = 1;
+              break;
+          case 'B':
+              value = 2;
+              break;
+          case 'C':
+              value = 3;
+              break;
+          case 'D':
+              value = 4;
+              break;
+          default:
+              value = -1;
+        }
+        //create AJAX data structure
+        $.ajax({
+          url: "../back_end/addmarkers.php",
+          method:'POST',
+          data: {
+            // one:one,
+            // two:two,
+            // three:three,
+            // four:four
+            MARKERVAL:value
+          }
+          }).done(function() {
+            //send message via websocket
+            try {
+              var msg = 'updatePoll';
+              socket.send(msg);
+              console.log('Sent: '+msg);
+            } catch(ex) {
+              log(ex);
+            }
+          });
+        //send Ajax
+    }
+    function getData(){
+      $.ajax({
+          url: "../back_end/sqlConnectionGET.php",
+          method:'GET',
+          data: {
+           CHECK:'getUserData'
+          }
+          }).done(function(json) {
+            //send message via websocket
+              $('#classNumberView').text(json.class);
+              $('#userEmailView').text(json.email);
+          });
+    }
+/////////////////FUNCTION LIST////////////////
+
+
+
+
+function init() {
+  var host = "ws://104.154.71.113:9000/echobot"; // SET THIS TO YOUR SERVER
+  try {
+    socket = new WebSocket(host);
+    console.log('WebSocket - status '+socket.readyState);
+    socket.onopen    = function(msg) {
+                 console.log("Welcome - status "+this.readyState);
+               };
+    socket.onmessage = function(msg) {
+                 console.log("Received: "+msg.data);
+               };
+    socket.onclose   = function(msg) {
+                 console.log("Disconnected - status "+this.readyState);
+               };
+  }
+  catch(ex){
+    console.log(ex);
+  }
+  $("msg").focus();
+}
+
+function send(){
+  var txt,msg;
+  txt = $("msg");
+  msg = txt.value;
+  if(!msg) {
+    alert("Message can not be empty");
+    return;
+  }
+  txt.value="";
+  txt.focus();
+  try {
+    socket.send(msg);
+    console.log('Sent: '+msg);
+  } catch(ex) {
+    log(ex);
+  }
+}
+function quit(){
+  if (socket != null) {
+    console.log("Goodbye!");
+    socket.close();
+    socket=null;
+  }
+}
+
+function reconnect() {
+  quit();
+  init();
+}
+    </script>
+  </head>
+  <body class = "student_body">
+      <div class="understanding"><!--poll_response-->
+        <div><h3>Class Number:<p id="classNumberView"></p></h3></div>
+        <div><h3>Email:<p id="userEmailView"></p></h3></div>
+        <h1>Poll Response</h1>
+        <!--<formx class = "radio_form" action="../back_end/addmarkers.php" method="post">-->
+          <div class="radio">
+            <label class = "radio_class"><input id="one" type="radio" name="Q1" value="A">A</input></label>
+          </div>
+          <div class="radio">
+            <label class = "radio_class"><input id="two" type="radio" name="Q1" value="B">B</input></label>
+          </div>
+          <div class="radio">
+            <label class = "radio_class"><input id="three" type="radio" name="Q1" value="C">C</input></label>
+          </div>
+          <div class="radio">
+            <label class = "radio_class"><input id="four" type="radio" name="Q1" value="D">D</input></label>
+          </div>
+          <div>
+            <input id="pollBtn" type="button" value="Send Poll Response" class ="button student_buttons">
+          </div>
+        </div>
+      <!--  </form>-->
+        <div class ="understanding">
+        <h1>The lecture is...</h1>
+          <input type="button" id = "LBTN1" name="opinion" value="Extremely Confusing" class ="button student_poll2">
+          <input type="button" id = "LBTN2" name="opinion" value="Somewhat Confusing" class ="button student_poll2">
+          <input type="button" id = "LBTN3" name="opinion" value="Pretty Good" class ="button student_poll2">
+          <input type="button" id = "LBTN4" name="opinion" value="Very Good" class ="button student_poll2">
+          <p class="lead">All answers are anonymous...Potentially</p>
+        </div>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+         <!-- <a class="navbar-brand" href="#"><img src =logo.png alt=ClassRoom Connect height=40 width=200></a>-->
+	   <a class="navbar-brand" href="#">ClassRoom Connect</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="home.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../../dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>
