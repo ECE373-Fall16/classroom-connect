@@ -7,6 +7,8 @@ session_start();
 
   DEFINE('DB_USERNAME', 'root');
   DEFINE('DB_PASSWORD', 'root');
+  //DEFINE('DB_HOST', '104.154.132.135');
+  //DEFINE('DB_HOST', '173.194.255.117');
   DEFINE('DB_HOST', 'localhost');
   DEFINE('DB_DATABASE', 'CLASSROOMCONNECT');
 
@@ -75,7 +77,11 @@ session_start();
 			$stmt = $mysqli->prepare("INSERT INTO MARKERS(marker_id,email,class_id) VALUES(?,?,?) ON DUPLICATE KEY UPDATE marker_id=?, class_id=?");
 			$stmt->bind_param("isiii",$_POST['VALUE'],$_SESSION["STUDENTEMAIL"],$_SESSION["STUDENTCLASSNUMBER"],$_POST['VALUE'],$_SESSION["STUDENTCLASSNUMBER"]);
 			$stmt->execute();
-  		}
+
+  		}elseif ($_POST['BUTTONPRESSED'] == 'setHostClass'){
+          $_SESSION['HOSTEMAIL'] = $_POST['hostEmail'];
+          $_SESSION['CURRENTCLASS'] = $_POST['classNumber'];
+      }
   	//}
 	$mysqli->close();
 ?>

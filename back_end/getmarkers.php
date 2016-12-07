@@ -16,6 +16,8 @@ runs querry to obtain all markers from the querry
   DEFINE('DB_USERNAME', 'root');
   DEFINE('DB_PASSWORD', 'root');
   DEFINE('DB_HOST', 'localhost');
+  //DEFINE('DB_HOST', '173.194.255.117');
+  //DEFINE('DB_HOST', '104.154.132.135');
   DEFINE('DB_DATABASE', 'CLASSROOMCONNECT');
 
   $mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE);

@@ -46,6 +46,16 @@
     $('#btnPRINT').click(function(){
       alert('printing...');
     });
+    $('#btnToggleChartView').click(function(){
+
+
+        if($('#chartContainer1').is(":visible")){
+            $('#chartContainer1').hide();  
+        }else{
+            $('#chartContainer1').show();
+        }
+        
+    });
 
   });
 
@@ -55,6 +65,7 @@ var sumUnderstanding;
 function init() {
 
   var host = "ws://127.0.0.1:9000/echobot"; // SET THIS TO YOUR SERVER
+  //var host = "ws://104.154.132.135:9000/echobot"; // SET THIS TO YOUR SERVER
   retrieveChartData(true);
 
   try {
@@ -193,60 +204,6 @@ var chart = new CanvasJS.Chart("chartContainer1",
     // update chart after specified interval
     setInterval(function(){updateChart()}, updateInterval);
 
-// var dps = []; // dataPoints
-
-//   var chart = new CanvasJS.Chart("chartContainer2",{
-//    //live update chart
-//     theme: "theme3",
-//     title :{
-//       text: "Student Understanding"
-//                         },
-//                axisY:{
-//                     //title: "Primary Y Axis",
-//                     },
-//         //////////////
-//     data: [{
-//       type: "scatter",
-//       dataPoints: dps
-//     }]
-//   });
-
-//   var xVal = 0;
-//   var yVal = 0;
-//   var updateInterval = 500;
-//   var dataLength = 100; // number of dataPoints visible at any point
-  
-//   var updateChart = function (count) {
-//     count = count || 1;
-//     // count is number of times loop runs to generate random dataPoints.
-//   //  backgroundColor:"#F5DEB3";
-//     for (var j = 0; j < count; j++) {
-//             getUnderstandingData();
-            
-//             //yVal = yVal +  (1/5)*(Math.round(5 + Math.random() *(-5-5)));
-//             //yVal = yVal + sumUnderstanding + 10;
-            
-//             //yVal = yVal +Math.round(Math.random() *(-1-1));
-//             //http://jsbin.com/yitep/5/edit?html,js,output todo look into
-//             if(yVal<0){}
-//             //if(yVal>0){document.body.style.backgroundColor = "green";}
-//       dps.push({
-//         x: xVal,
-//         y: sumUnderstanding
-//       });
-//       xVal++;
-//     };
-//     if (dps.length > dataLength)
-//     {
-//       dps.shift();
-//     }
-//     chart.render();
-//   };
-//   // generates first set of dataPoints
-//   updateChart(dataLength);
-
-//   // update chart after specified time.
-//   setInterval(function(){updateChart()}, updateInterval);
 }
 function makeChart(){
       var canvas = document.getElementById('updating-chart'),
@@ -313,15 +270,23 @@ function getUnderstandingData(){
   
 	<script type="text/javascript" src="linkedFiles/canvasjs/canvasjs.min.js"></script>
 
-<div class = "chart_class" id="canvasDiv">
-     <div id="chartContainer1" style="height:25%; width:49%;float:right" ></div>
+<div class = "chart_class" id="canvasDiv" style="width:100%; height: 100%;">
+    <div>
+         <div id="chartContainer1" style="height:50%; width:49%;float:right" ></div>
+        <div class = "below_chart">
+
+            <button id="btnRESET" class = "button host_reset" type="button">Reset</button>
+            <button id="btnToggleChartView" class = "button host_reset" type ="button" id="print_button" value ="print">Show / Hide Chart</button>
+        </div>
+     </div>
      <!-- <div id="chartContainer2" style="height:25%; width:49%;"></div> -->
-     <canvas id="updating-chart" width="500" height="300"></canvas>
+     <!-- <canvas id="updating-chart" width="500" height="300"></canvas> -->
+     <div style="height:30%; width:50%; padding:20px; float: left;">
+     <h2>Classroom <?php echo $_SESSION['CURRENTCLASS'];?>: User Understanding</h2>
+     <canvas id="updating-chart" style="height:100%; width:100%;;"></canvas>
+     </div>
 </div>
-<div class = "below_chart">
-<button id="btnRESET" class = "button host_reset" type="button">Reset</button>
-<button id="btnPRINT" class = "button host_reset" type ="button" id="print_button" value ="print">Print</button>
-</div>
+
 
      <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
@@ -340,7 +305,7 @@ function getUnderstandingData(){
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="home.html">Home</a></li>
+            <li class="active"><a href="index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
           </ul>
@@ -362,7 +327,7 @@ function getUnderstandingData(){
     
 </body>
 <footer>
-  <p>ClassRoom Connect <?php echo $_SESSION['CURRENTCLASS'] ?></p>
+  <!-- <p>ClassRoom Connect <?php echo $_SESSION['CURRENTCLASS'] ?></p> -->
 </footer>
 
 </html>

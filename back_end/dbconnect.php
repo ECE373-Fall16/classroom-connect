@@ -12,7 +12,7 @@
 
 DEFINE ('DB_USER', 'user');
 DEFINE ('DB_PASSWORD', 'ece373');		
-DEFINE ('DB_HOST', 'localhost8888'); 	// development host
+DEFINE ('DB_HOST', '104.154.132.135'); 	// development host
 DEFINE ('DB_NAME', 'CLASSROOMCONNECT'); // db in sql
  
 // $dbc will contain a resource link to the database
