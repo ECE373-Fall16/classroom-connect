@@ -1,0 +1,215 @@
+<!--page for creating a class-->
+<!-- this will have the option of either creating a class or joining one-->
+<!--class host page will have two graphs and reset button option
+to download list of connected emails/names-->
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>ClassRoom Connect</title>
+    <!-- Bootstrap core CSS -->
+   <link href="linkedFiles/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="starter-template.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet" type="text/css" >
+    <!-- JQuery & AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- JQuery Functions & Websocket -->
+    <script type="text/javascript">
+        var socket;
+        $(document).ready(function(){
+          $('#inputClassNameWarning').hide();
+          init();
+          $('#CreateClass').click(function(){
+              if($('#ClassName').val() == ''){
+                $('#inputClassNameWarning').show();
+              }else{
+                sendNewClassData();  
+              }
+          });
+        });
+
+        function sendNewClassData(){
+          //collect data from fields
+          var BUTTONPRESSED = 'btnCreateClass';
+          var className = $('#ClassName').val();
+          if(className == undefined){
+            //don't do insertion
+            className = '';
+          }
+          var classNumber = $('#idNum2').val();
+            //create AJAX data structure
+            $.ajax({  
+              url: "../back_end/sqlConnectionGET.php",
+              method:'GET',
+              data: {
+                CHECK:'check',
+                classNumber:classNumber
+              }
+               }).done(function(json) {
+                  var result;
+                  result = json.one;
+                  console.log(result + ' <-----');
+                  if(result==0){
+                    $.ajax({
+                      url: "../back_end/sqlConnection.php",
+                      method:'POST',
+                      data: {
+                        BUTTONPRESSED:BUTTONPRESSED,
+                        className:className,
+                        classNumber:classNumber
+                      }
+                    }).done(function(){
+                      //send message via websocket
+                      try { 
+                            var msg = 'ADDCLASS';
+                            socket.send(msg); 
+                            console.log('Sent: '+msg); 
+                            alert("creating classroom");
+                            window.open("./host.php", "_self");
+                          } catch(ex) { 
+                            log(ex); 
+                          }
+                    });
+                  }else{
+                    alert("The classroom ID "+ classNumber+" already exists!");
+                  }
+              });
+            
+
+          }
+
+          function init() {
+            var host = "ws://104.154.71.113:9000/echobot"; // SET THIS TO YOUR SERVER
+            try {
+              socket = new WebSocket(host);
+              console.log('WebSocket - status '+socket.readyState);
+              socket.onopen    = function(msg) { 
+                           console.log("Welcome - status "+this.readyState); 
+                         };
+              socket.onmessage = function(msg) { 
+                           console.log("Received: "+msg.data); 
+                         };
+              socket.onclose   = function(msg) { 
+                           console.log("Disconnected - status "+this.readyState); 
+                         };
+            }
+            catch(ex){ 
+              console.log(ex); 
+            }
+            $("msg").focus();
+          }
+
+          function send(){
+            var txt,msg;
+            txt = $("msg");
+            msg = txt.value;
+            if(!msg) { 
+              alert("Message can not be empty"); 
+              return; 
+            }
+            txt.value="";
+            txt.focus();
+            try { 
+              socket.send(msg); 
+              console.log('Sent: '+msg); 
+            } catch(ex) { 
+              log(ex); 
+            }
+          }
+
+          function quit(){
+            if (socket != null) {
+              console.log("Goodbye!");
+              socket.close();
+              socket=null;
+            }
+          }
+
+          function reconnect() {
+            quit();
+            init();
+          }
+
+    </script>
+  </head>
+  <body class = "create_body" >
+    <div class = "form" > <!-- onsubmit="return check_if_empty()" -->
+      <form class="create_form" > <!-- name = "create_text" -->
+        <h2>Create a class:</h2>
+        <!-- <h3>Class Name:</h3> -->
+        <input id="ClassName" type="text" name="className" placeholder="Class Name"></input>
+        <h3>Your classroom ID # is:</h3>
+        <p id="inputClassNameWarning">Please Insert a Name</p>
+        <input id="idNum2" type="text" name="classNumber"></input>
+        <p class = "id" id="idNum" hidden="true"><p>
+        <button type="button" id="CreateClass" name="btnCreateClass" class="button create_buttons">Start</button>
+          <div>
+            <button type="button" class = "button create_buttons" onclick="window.location.href='home.html'"value="create">Cancel</button>
+          </div>
+      </form>
+    </div>
+<script>
+var ID = Math.floor(Math.random()*(1000-1)+1);
+document.getElementById("idNum").innerHTML = ID;
+document.getElementById("idNum2").value = ID;
+</script>
+<script type="text/javascript">
+function check_if_empty(){
+  if(!create_text.Name.value){
+    alert("Please fill in the text box.");
+    return false;
+  }
+  return true;
+}
+</script>
+     <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+         <!-- <a class="navbar-brand" href="#"><img src =logo.png alt=ClassRoom Connect height=40 width=200></a>-->
+	   <a class="navbar-brand" href="home.html">ClassRoom Connect</a>
+	  <style>
+
+	  </style>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="home.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+	<div id="chartContainer" style="height: 300px; width:50%;">
+	</div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../../dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+</body>
+<footer>
+  <!-- <p>ClassRoom Connect</p> -->
+</footer>
+
+</html>
