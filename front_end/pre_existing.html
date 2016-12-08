@@ -17,21 +17,135 @@
     <!-- Custom styles for this template -->
     <link href="starter-template.css" rel="stylesheet">
     <link href="main.css" rel="stylesheet" type="text/css" >
+     <!-- JQuery & AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- JQuery Functions & Websocket -->
+    <script type="text/javascript">
+        var socket;
+        $(document).ready(function(){
+          init();
+          $('#submitBTN').click(function(){
+              if(check_if_empty()){
+                getClassData();  
+              }
+          });
+        });
+
+        function getClassData(){
+          //collect data from fields
+          
+          var hostEmail = $('#inputEmail').val();
+          var classNumber = $('#inputClassNum').val();
+            //create AJAX data structure
+            $.ajax({  
+              url: "../back_end/sqlConnectionGET.php",
+              method:'GET',
+              data: {
+                CHECK:'check',
+                classNumber:classNumber,
+              }
+               }).done(function(json) {
+                  var result;
+                  result = json.one;
+                  if(result==1){ //class found
+                    $.ajax({
+                      url: "../back_end/sqlConnection.php",
+                      method:'POST',
+                      data: {
+                        BUTTONPRESSED:'setHostClass',
+                        hostEmail:hostEmail,
+                        classNumber:classNumber
+                      }
+                    }).done(function(){
+                      //send message via websocket
+                      try { 
+                            var msg = 'RETRIEVE CLASS';
+                            socket.send(msg); 
+                            console.log('Sent: '+msg); 
+                            alert("opening classroom " + classNumber);
+                            //window.open("http://localhost:8888/front_end/host.php", "_self");
+                            window.open('host.php', "_self");
+                          } catch(ex) { 
+                            log(ex); 
+                          }
+                    });
+
+                  }else{
+                    alert("The classroom ID "+ classNumber+" does not exist!");
+                  }
+              });
+            
+
+          }
+
+          function init() {
+            //var host = "ws://104.154.132.135:9000/echobot"; // SET THIS TO YOUR SERVER
+            var host = "ws://35.184.28.148:9000/echobot"; // SET THIS TO YOUR SERVER
+            try {
+              socket = new WebSocket(host);
+              console.log('WebSocket - status '+socket.readyState);
+              socket.onopen    = function(msg) { 
+                           console.log("Welcome - status "+this.readyState); 
+                         };
+              socket.onmessage = function(msg) { 
+                           console.log("Received: "+msg.data); 
+                         };
+              socket.onclose   = function(msg) { 
+                           console.log("Disconnected - status "+this.readyState); 
+                         };
+            }
+            catch(ex){ 
+              console.log(ex); 
+            }
+            $("msg").focus();
+          }
+
+          function send(){
+            var txt,msg;
+            txt = $("msg");
+            msg = txt.value;
+            if(!msg) { 
+              alert("Message can not be empty"); 
+              return; 
+            }
+            txt.value="";
+            txt.focus();
+            try { 
+              socket.send(msg); 
+              console.log('Sent: '+msg); 
+            } catch(ex) { 
+              log(ex); 
+            }
+          }
+
+          function quit(){
+            if (socket != null) {
+              console.log("Goodbye!");
+              socket.close();
+              socket=null;
+            }
+          }
+
+          function reconnect() {
+            quit();
+            init();
+          }
+
+    </script>
   </head>
   <body class = "join_body">
 <p1>Please enter in your email and class ID #:</p1>
 
 <p><a href="#">What is my class ID #?</a></p>
 
-<form action="student.html" class = "student_input" name = "join_text"
-onsubmit="return check_if_empty()">
+<form  class="student_input">
 
   <h3>Email:</h3>
-  <input type="text" name="email">
+  <input id="inputEmail" type="text" name="email">
   <h3>Class ID #</h3>
-   <input type="text" name="IDNum">
+   <input id="inputClassNum" type="text" name="IDNum">
    <div class = "buttons_div">
-   <button type="submit" class = "button join_buttons" value="start">Join as Host</button>
+   <button id="submitBTN" type="button" class = "button join_buttons">Join as Host</button>
   </div>
   <div class = "buttons_div">
    <button type="button" class = "button join_buttons" onclick="window.location.href='home.html'"value="create">Cancel</button>
@@ -70,15 +184,15 @@ onsubmit="return check_if_empty()">
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
 <script type="text/javascript">
 function check_if_empty(){
-  if(!join_text.email.value || !join_text.IDNum.value){
+  if(($('#inputEmail').val() == '') || ($('#inputClassNum').val() == '')){
     alert("Please fill in all text boxes.");
     return false;
   }
-    else if(!(join_text.email.value.includes("@"))){
+    else if(!($('#inputEmail').val().includes("@"))){
       alert("Please enter a valid email.");
       return false;
     }
-    else if(/[^0-9.]/.test(join_text.IDNum.value)){
+    else if(/[^0-9.]/.test($('#inputClassNum').val())){
       alert("Please enter a valid ID number.");
       return false;
     }

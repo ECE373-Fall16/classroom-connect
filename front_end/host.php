@@ -1,7 +1,10 @@
-<!DOCTYPE HTML>
+<?php session_start(); ?> 
+<!DOCTYPE html>
+
 <html>
 
   <head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,23 +18,152 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
-    <link href="main.css" rel="stylesheet" type="text/css" >
+    <link href="/linkedFiles/starter-template.css" rel="stylesheet">
+    <link href="main.css?v=1.1" rel="stylesheet" type="text/css" >
+    <!-- JQuery & AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="http://www.chartjs.org/assets/Chart.min.js"></script>
   </head>
   <body>
       <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
 
    <script type="text/javascript">
 
-	window.onload = function () {
-    var A = 100;
-    var B = 250;
-    var C = 90;
-    var D = 130;
+     var A = 404;
+     var B = 404;
+     var C = 404;
+     var D = 404;
+     var ctx;
+	$(document).ready(function(){
+    
+    init();
+    makeChart();
+    
+    $('#btnRESET').click(function(){
+        resetPoll();
+    });
+    $('#btnPRINT').click(function(){
+      alert('printing...');
+    });
+    $('#btnToggleChartView').click(function(){
+
+
+        if($('#chartContainer1').is(":visible")){
+            $('#chartContainer1').hide();  
+        }else{
+            $('#chartContainer1').show();
+        }
+        
+    });
+
+  });
+
+/////////////////////////////////////////////////
+var socket;
+var sumUnderstanding;
+function init() {
+
+  var host = "ws://35.184.28.148:9000/echobot"; // SET THIS TO YOUR SERVER
+  //var host = "ws://104.154.132.135:9000/echobot"; // SET THIS TO YOUR SERVER
+  retrieveChartData(true);
+
+  try {
+    socket = new WebSocket(host);
+    console.log('WebSocket - status '+socket.readyState);
+    socket.onopen    = function(msg) {
+        console.log("Welcome - status "+this.readyState);
+    };
+    socket.onmessage = function(msg) {
+      if(msg.data == 'updatePoll'){
+      retrieveChartData(false);
+      console.log("Received: "+msg.data);
+    };
+    socket.onclose   = function(msg) {
+      console.log("Disconnected - status "+this.readyState);
+    };
+  }
+
+  }
+  catch(ex){
+      console.log(ex);
+  }
+  $("msg").focus();
+}
+
+function resetPoll(){
+  var BUTTONPRESSED = 'resetPoll';
+  var classnumber = <?php echo $_SESSION['CURRENTCLASS']; ?>;
+  $.ajax({
+    url: "../back_end/sqlConnection.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
+    method:'POST',
+    data: {
+        BUTTONPRESSED:BUTTONPRESSED,
+        CLASSNUMBER: classnumber
+    }
+     }).done(function(json) {
+       
+    
+    });
+     alert('Poll Reset');
+     retrieveChartData(false);
+}
+
+function retrieveChartData(initFlag){
+  var currentClass = <?php echo $_SESSION['CURRENTCLASS'];?>;
+  $.ajax({
+    url: "../back_end/getmarkers.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
+    method:'GET',
+    data: {
+        CLASSNUMBER:currentClass
+    }
+     }).done(function(json) {
+        A = json.one;
+        B = json.two;
+        C = json.three;
+        D = json.four;
+        if(initFlag){
+          $('#chartContainer1').remove();
+          $('#canvasDiv').append(" <div id='chartContainer1' style='height:25%; width:49%;float:right' ></div>  ");
+        }
+        renderChart();
+    
+    });
+}
+
+function send(){
+  var txt,msg;
+  txt = $("msg");
+  msg = txt.value;
+  if(!msg) {
+    alert("Message can not be empty");
+    return;
+  }
+  txt.value="";
+  txt.focus();
+  try {
+    socket.send(msg);
+    console.log('Sent: '+msg);
+  } catch(ex) {
+    console.log(ex);
+  }
+}
+function quit(){
+  if (socket != null) {
+    console.log("Goodbye!");
+    socket.close();
+    socket=null;
+  }
+}
+
+function reconnect() {
+  quit();
+  init();
+}
+
+function renderChart(){
     var sum = A+B+C+D;
   var data = [
-  {label: "A", y: A}	,
+  {label: "A", y: A},
   {label: "B", y: B},
   {label: "C", y: C},
   {label: "D", y: D},
@@ -71,89 +203,90 @@ var chart = new CanvasJS.Chart("chartContainer1",
     // update chart after specified interval
     setInterval(function(){updateChart()}, updateInterval);
 
-var dps = []; // dataPoints
+}
+function makeChart(){
+      var canvas = document.getElementById('updating-chart'),
+     ctx = canvas.getContext('2d'),
+    startingData = {
+      labels: [1, 2, 3, 4, 5, 6, 7],
+      datasets: [
+          
+                {
+                    fillColor: "rgba(151,187,205,0.2)",
+                    strokeColor: "rgba(151,187,205,1)",
+                    pointColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    data: [0, 0, 0, 0, 0, 0, 0]
+                }
+            ]
+          },
+          latestLabel = startingData.labels[6];
 
-  var chart = new CanvasJS.Chart("chartContainer2",{
-   //live update chart
-    theme: "theme3",
-    title :{
-      text: "Student Understanding"
-                        },
-               axisY:{
-                    //title: "Primary Y Axis",
-                    },
-        //////////////
-    data: [{
-      type: "line",
-      dataPoints: dps
-    }]
-  });
+      // Reduce the animation steps for demo clarity.
+      var myLiveChart = new Chart(ctx).Line(startingData, {animationSteps: 15});
 
-  var xVal = 0;
-  var yVal = 0;
-  var updateInterval = 100;
-  var dataLength = 500; // number of dataPoints visible at any point
 
-  var updateChart = function (count) {
-    count = count || 1;
-    // count is number of times loop runs to generate random dataPoints.
-  //  backgroundColor:"#F5DEB3";
-    for (var j = 0; j < count; j++) {
-            yVal = yVal +  (1/5)*(Math.round(5 + Math.random() *(-5-5)));
-            //yVal = yVal +Math.round(Math.random() *(-1-1));
-            //yVal = yVal/2;
-            if(yVal<0){}
-            //if(yVal>0){document.body.style.backgroundColor = "green";}
-      dps.push({
-        x: xVal,
-        y: yVal
-      });
-      xVal++;
-    };
-    if (dps.length > dataLength)
-    {
-      dps.shift();
+      setInterval(function(){
+      var currentClass = <?php echo $_SESSION['CURRENTCLASS'];?>;
+        $.ajax({
+          url: "../back_end/sqlConnectionGET.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
+          method:'GET',
+          data: {
+              CHECK: 'getUnderstandingData',
+              CLASSNUMBER:currentClass,
+          }
+           }).done(function(json) {
+           //alert(json.one + " me!");
+            //return json.one;
+           // Add two random numbers for each dataset
+        myLiveChart.addData([json.one], ++latestLabel);
+        // Remove the first point so we dont just add values forever
+        myLiveChart.removeData();
+          });
+        
+      }, 2000);
+}
+
+function getUnderstandingData(){
+  var currentClass = <?php echo $_SESSION['CURRENTCLASS'];?>;
+  $.ajax({
+    url: "../back_end/sqlConnectionGET.php",//http://localhost:8888/classroom-connect/back_end/getmarkers.php
+    method:'GET',
+    data: {
+        CHECK: 'getUnderstandingData',
+        CLASSNUMBER:currentClass,
     }
-    chart.render();
-  };
+     }).done(function(json) {
+     alert(json.one + " me!");
+      return json.one;
+     
+    });
+      
 
-  // generates first set of dataPoints
-  updateChart(dataLength);
+}
 
-  // update chart after specified time.
-  setInterval(function(){updateChart()}, updateInterval);
-  }
-/////////////////////////////////////////////////
 	</script>
+  
 	<script type="text/javascript" src="linkedFiles/canvasjs/canvasjs.min.js"></script>
 
-<div>
-     <div id="chartContainer1" style="height:25%; width:49%;float:right" ></div>
-     <div id="chartContainer2" style="height:25%; width:49%;"></div>
-</div>
-<button type="reset" value="Reset">Reset</button> <!--fix this later and below stuff-->
-<div>
-	<!--<h1>Some text</h1>-->
-</div>
-  <!--  <style> erase this later
-      body {
-  padding-top: 80px;
-  padding-left: 20px;
-  padding-right: 20px;
-      }
-      .starter-template {
-  padding: 40px 15px;
-      text-align: left;
+<div class = "chart_class" id="canvasDiv" style="width:100%; height: 100%;">
+    <div>
+         <div id="chartContainer1" style="height:50%; width:49%;float:right" ></div>
+        <div class = "below_chart">
 
-     body.radio2{
-     background-color: #4CAF50;
-     }
-     .h1{
-       position:relative;
-     }
-  }
+            <button id="btnRESET" class = "button host_reset" type="button">Reset</button>
+            <button id="btnToggleChartView" class = "button host_reset" type ="button" id="print_button" value ="print">Show / Hide Chart</button>
+        </div>
+     </div>
+     <!-- <div id="chartContainer2" style="height:25%; width:49%;"></div> -->
+     <!-- <canvas id="updating-chart" width="500" height="300"></canvas> -->
+     <div style="height:30%; width:50%; padding:20px; float: left;">
+     <h2>Classroom <?php echo $_SESSION['CURRENTCLASS'];?>: User Understanding</h2>
+     <canvas id="updating-chart" style="height:100%; width:100%;;"></canvas>
+     </div>
+</div>
 
-  </style>-->
+
      <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -171,15 +304,17 @@ var dps = []; // dataPoints
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="home.html">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li class="active"><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 	<div id="chartContainer" style="height: 300px; width:50%;">
 	</div>
+
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
@@ -188,9 +323,10 @@ var dps = []; // dataPoints
     <script src="../../dist/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    
 </body>
 <footer>
-  <p>ClassRoom Connect</p>
+  <!-- <p>ClassRoom Connect <?php echo $_SESSION['CURRENTCLASS'] ?></p> -->
 </footer>
 
 </html>

@@ -98,13 +98,9 @@
         }
         //create AJAX data structure
         $.ajax({
-          url: "../back_end/addmarkers.php",
+          url: "/back_end/addmarkers.php",
           method:'POST',
           data: {
-            // one:one,
-            // two:two,
-            // three:three,
-            // four:four
             MARKERVAL:value
           }
           }).done(function() {
@@ -138,7 +134,8 @@
 
 
 function init() {
-  var host = "ws://104.154.71.113:9000/echobot"; // SET THIS TO YOUR SERVER
+  //var host = "ws://104.154.132.135:9000/echobot"; 
+  var host = "ws://35.184.28.148:9000/echobot"; // SET THIS TO YOUR SERVER
   try {
     socket = new WebSocket(host);
     console.log('WebSocket - status '+socket.readyState);
@@ -235,7 +232,7 @@ function reconnect() {
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="home.html">Home</a></li>
+            <li class="active"><a href="index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
           </ul>

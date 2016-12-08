@@ -50,7 +50,7 @@
                }).done(function(json) {
                   var result;
                   result = json.one;
-                  console.log(result + ' <-----');
+                  //console.log(result + ' <-----');
                   if(result!=0){ //class does not exist
                     $.ajax({
                       url: "../back_end/sqlConnection.php",
@@ -66,7 +66,8 @@
                             var msg = 'UPDATEUSER';
                             socket.send(msg); 
                             console.log('Sent: '+msg); 
-                            window.open("student.html", "_self");
+                            //window.open("http://localhost:8888/front_end/student.html", "_self");
+                            window.open('student.html', "_self");
                           } catch(ex) { 
                             log(ex); 
                           }
@@ -75,12 +76,11 @@
                     alert("The classroom ID "+ classNumber+" does not exist!");
                   }
               });
-            
-
           }
 
           function init() {
-            var host = "ws://104.154.71.113/echobot"; // SET THIS TO YOUR SERVER
+            //var host = "ws://104.154.132.135:9000/echobot"; 
+            var host = "ws://35.184.28.148:9000/echobot"; // SET THIS TO YOUR SERVER
             try {
               socket = new WebSocket(host);
               console.log('WebSocket - status '+socket.readyState);
@@ -148,7 +148,7 @@ onsubmit="return check_if_empty()">
    <button id="JoinClass" type="button" class = "button join_buttons">Start</button>
   </div>
   <div class = "buttons_div">
-   <button type="button" class = "button join_buttons" onclick="window.location.href='home.html'"value="create">Cancel</button>
+   <button type="button" class = "button join_buttons" onclick="window.location.href='index.html'"value="create">Cancel</button>
  </div>
 </form>
      <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -165,7 +165,7 @@ onsubmit="return check_if_empty()">
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="home.html">Home</a></li>
+            <li class="active"><a href="index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
           </ul>

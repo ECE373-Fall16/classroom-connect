@@ -7,6 +7,8 @@ session_start();
 
   DEFINE('DB_USERNAME', 'root');
   DEFINE('DB_PASSWORD', 'root');
+  //DEFINE('DB_HOST', '173.194.255.117');
+  //DEFINE('DB_HOST', '104.154.132.135');
   DEFINE('DB_HOST', 'localhost');
   DEFINE('DB_DATABASE', 'CLASSROOMCONNECT');
 
@@ -29,7 +31,7 @@ session_start();
           $jsonArray['one']= $inTable;
       }elseif ($_GET['CHECK'] == 'getUnderstandingData') {
         //query for values where the time is roughtly 1 minute
-        $timeBound = time()-20; 
+        $timeBound = time()-1; 
 
         //$duration = 'NOW()-5000'; 
         $now = date('Y-m-d H:i:s', time());
@@ -42,7 +44,7 @@ session_start();
                //echo $resultONE; 
            }
            if($inTable == null){
-           	$inTable = -1;
+           	$inTable = 0;
            }
           $jsonArray['one']= $inTable;
       }elseif($_GET['CHECK'] == 'getUserData'){

@@ -1,5 +1,5 @@
 <?php
-header("Location: ../front_end/student.html"); //redirects page back to index.html as blunt refresh
+//header("Location: ../front_end/student.html"); //redirects page back to index.html as blunt refresh
 session_start();
 /*
 add markers to db
@@ -7,6 +7,8 @@ add markers to db
   DEFINE('DB_USERNAME', 'root');
   DEFINE('DB_PASSWORD', 'root');
   DEFINE('DB_HOST', 'localhost');
+  //DEFINE('DB_HOST', '104.154.132.135');
+  //DEFINE('DB_HOST', '173.194.255.117');
   DEFINE('DB_DATABASE', 'CLASSROOMCONNECT');
 
   $mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
