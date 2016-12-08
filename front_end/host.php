@@ -23,7 +23,6 @@
     <!-- JQuery & AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="http://www.chartjs.org/assets/Chart.min.js"></script>
-    <?php require '../back_end/getmarkers.php'; ?>
   </head>
   <body>
       <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
@@ -64,7 +63,7 @@ var socket;
 var sumUnderstanding;
 function init() {
 
-  var host = "ws://127.0.0.1:9000/echobot"; // SET THIS TO YOUR SERVER
+  var host = "ws://35.184.28.148:9000/echobot"; // SET THIS TO YOUR SERVER
   //var host = "ws://104.154.132.135:9000/echobot"; // SET THIS TO YOUR SERVER
   retrieveChartData(true);
 
