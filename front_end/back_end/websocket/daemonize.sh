@@ -103,6 +103,7 @@ END
 install_sysv_init(){
     cat > /tmp/"$name" << EOF
 #!/bin/sh
+
 #
 ### BEGIN INIT INFO
 # Provides:          $name
@@ -115,7 +116,7 @@ install_sysv_init(){
 # Short-Description: Daemonized $name service.
 ### END INIT INFO
 # chkconfig: 2345 90 60
-name="$name"
+websocket.php="$name"
 command="$command"
 command_args="$command_args"
 daemon="$daemon"
