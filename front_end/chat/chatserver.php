@@ -54,7 +54,7 @@ while (true) {
 			$user_color = $tst_msg->color; //color
 			
 			//prepare data to be sent to client
-			if ($user_name!=null){
+			if ($user_name!=null&&$user_message!=null&&$user_color!=null){
 				$response_text = mask(json_encode(array('type'=>'usermsg', 'name'=>$user_name, 'message'=>$user_message, 'color'=>$user_color)));
 			send_message($response_text); //send data
 			break 2; //exist this loop
