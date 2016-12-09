@@ -273,10 +273,12 @@ function getUnderstandingData(){
     <div>
          <div id="chartContainer1" style="height:50%; width:49%;float:right" ></div>
         <div class = "below_chart">
-
-            <button id="btnRESET" class = "button host_reset" type="button">Reset</button>
-            <button id="btnToggleChartView" class = "button host_reset" type ="button" id="print_button" value ="print">Show / Hide Chart</button>
-        </div>
+		<div>
+            <input id="btnRESET" type="button" value="Reset" class ="button host_reset">
+          </div>
+			<div>
+            <input id="btnToggleChartView" type="button" value="Show / Hide Chart" class ="button host_reset">
+          </div>
      </div>
      <!-- <div id="chartContainer2" style="height:25%; width:49%;"></div> -->
      <!-- <canvas id="updating-chart" width="500" height="300"></canvas> -->
