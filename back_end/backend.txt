@@ -1,4 +1,0 @@
-Backend README
-
-1. will be using PHP with MySQL
-2. This folder is the essential development folder for backend

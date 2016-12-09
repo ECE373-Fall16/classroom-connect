@@ -23,7 +23,6 @@
     <!-- JQuery & AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="http://www.chartjs.org/assets/Chart.min.js"></script>
-    <?php require '../back_end/getmarkers.php'; ?>
   </head>
   <body>
       <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
@@ -64,7 +63,7 @@ var socket;
 var sumUnderstanding;
 function init() {
 
-  var host = "ws://127.0.0.1:9000/echobot"; // SET THIS TO YOUR SERVER
+  var host = "ws://35.184.28.148:9000/echobot"; // SET THIS TO YOUR SERVER
   //var host = "ws://104.154.132.135:9000/echobot"; // SET THIS TO YOUR SERVER
   retrieveChartData(true);
 
@@ -274,10 +273,12 @@ function getUnderstandingData(){
     <div>
          <div id="chartContainer1" style="height:50%; width:49%;float:right" ></div>
         <div class = "below_chart">
-
-            <button id="btnRESET" class = "button host_reset" type="button">Reset</button>
-            <button id="btnToggleChartView" class = "button host_reset" type ="button" id="print_button" value ="print">Show / Hide Chart</button>
-        </div>
+		<div>
+            <input id="btnRESET" type="button" value="Reset" class ="button host_reset">
+          </div>
+			<div>
+            <input id="btnToggleChartView" type="button" value="Show / Hide Chart" class ="button host_reset">
+          </div>
      </div>
      <!-- <div id="chartContainer2" style="height:25%; width:49%;"></div> -->
      <!-- <canvas id="updating-chart" width="500" height="300"></canvas> -->
