@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<dataset>
+    <USERS user_id="1" first_name="" last_name="" email="anthony.me.chan@gmail.com" user_password="" poll_id="373"/>
+    <USERS user_id="3" first_name="" last_name="" email="mooshutofu@gmail.com" user_password="" poll_id="373"/>
+	<USERS user_id="4" first_name="" last_name="" email="jkcao@umass.edu" user_password="" poll_id="373"/>
+</dataset>

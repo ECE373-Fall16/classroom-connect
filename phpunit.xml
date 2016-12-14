@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="./testing/vendor/autoload.php">
+	color= "true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	stopOnFailuers"false"
+	syntaxCheck="false"
+	<testsuites>
+		<testsuite name="connectionTest">
+		<directory>./testing/testcases</directory>
+		</testsuite>
+	</testsuites>
+	 <php>
+        <var name="DB_DSN" value="mysql:dbname=CLASSROOMCONNECT;host=localhost" />
+        <var name="DB_USER" value="root" />
+        <var name="DB_PASSWD" value="root" />
+        <var name="DB_DBNAME" value="CLASSROOMCONNECT" />
+    </php>
+</phpunit>
