@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>ClassRoom Connect</title>
+    <!-- Bootstrap core CSS -->
+   <link href="linkedFiles/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="starter-template.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet" type="text/css" >
+    <!-- JQuery & AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <!-- JQuery Functions & Websocket -->
+    <script type="text/javascript">
+        var socket;
+        $(document).ready(function(){
+          init();
+          $('#JoinClass').click(function(){
+                if($('#Email').val() == ''){
+                    alert("Please provide an email");
+                }else{
+                    getClassData();    
+                }     
+              
+          });
+        });
+
+        function getClassData(){
+          //collect data from fields
+          var BUTTONPRESSED = 'addOrUpdateUser';
+          var email = $('#Email').val();
+          var classNumber = $('#ClassNumber').val();
+            //create AJAX data structure
+            $.ajax({  
+              url: "../back_end/sqlConnectionGET.php",
+              method:'GET',
+              data: {
+                CHECK:'check',
+                classNumber:classNumber
+              }
+               }).done(function(json) {
+                  var result;
+                  result = json.one;
+                  //console.log(result + ' <-----');
+                  if(result!=0){ //class does not exist
+                    $.ajax({
+                      url: "../back_end/sqlConnection.php",
+                      method:'POST',
+                      data: {
+                        BUTTONPRESSED:BUTTONPRESSED,
+                        email:email,
+                        classNumber:classNumber
+                      }
+                    }).done(function(){
+                      //send message via websocket
+                      try { 
+                            var msg = 'UPDATEUSER';
+                            socket.send(msg); 
+                            console.log('Sent: '+msg); 
+                            //window.open("http://localhost:8888/front_end/student.html", "_self");
+                            window.open('student.html', "_self");
+                          } catch(ex) { 
+                            log(ex); 
+                          }
+                    });
+                  }else{
+                    alert("The classroom ID "+ classNumber+" does not exist!");
+                  }
+              });
+          }
+
+          function init() {
+            //var host = "ws://104.154.132.135:9000/echobot"; 
+            var host = "ws://35.184.28.148:9000/echobot"; // SET THIS TO YOUR SERVER
+            try {
+              socket = new WebSocket(host);
+              console.log('WebSocket - status '+socket.readyState);
+              socket.onopen    = function(msg) { 
+                           console.log("Welcome - status "+this.readyState); 
+                         };
+              socket.onmessage = function(msg) { 
+                           console.log("Received: "+msg.data); 
+                         };
+              socket.onclose   = function(msg) { 
+                           console.log("Disconnected - status "+this.readyState); 
+                         };
+            }
+            catch(ex){ 
+              console.log(ex); 
+            }
+            $("msg").focus();
+          }
+
+          function send(){
+            var txt,msg;
+            txt = $("msg");
+            msg = txt.value;
+            if(!msg) { 
+              alert("Message can not be empty"); 
+              return; 
+            }
+            txt.value="";
+            txt.focus();
+            try { 
+              socket.send(msg); 
+              console.log('Sent: '+msg); 
+            } catch(ex) { 
+              log(ex); 
+            }
+          }
+
+          function quit(){
+            if (socket != null) {
+              console.log("Goodbye!");
+              socket.close();
+              socket=null;
+            }
+          }
+
+          function reconnect() {
+            quit();
+            init();
+          }
+    </script>
+  </head>
+  <body class = "join_body">
+<p1>Please enter in your email and class ID #:</p1>
+
+<p><a href="#">What is my class ID #?</a></p>
+
+<form action="student.html" class = "student_input" name = "join_text"
+onsubmit="return check_if_empty()">
+
+  <h3>Email:</h3>
+  <input id="Email" type="text" name="email" placeholder="Email">
+  <h3>Class ID #</h3>
+   <input id="ClassNumber" type="text" name="IDNum" placeholder="Class Number">
+   <div class = "buttons_div">
+   <button id="JoinClass" type="button" class = "button join_buttons">Start</button>
+  </div>
+  <div class = "buttons_div">
+   <button type="button" class = "button join_buttons" onclick="window.location.href='index.html'"value="create">Cancel</button>
+ </div>
+</form>
+     <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+         <!-- <a class="navbar-brand" href="#"><img src =logo.png alt=ClassRoom Connect height=40 width=200></a>-->
+	   <a class="navbar-brand" href="#">ClassRoom Connect</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+	<div id="chartContainer" style="height: 300px; width:50%;">
+	</div>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="../../dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+<script type="text/javascript">
+function check_if_empty(){
+  if(!join_text.email.value || !join_text.IDNum.value){
+    alert("Please fill in all text boxes.");
+    return false;
+  }
+    else if(!(join_text.email.value.includes("@"))){
+      alert("Please enter a valid email.");
+      return false;
+    }
+    else if(/[^0-9.]/.test(join_text.IDNum.value)){
+      alert("Please enter a valid ID number.");
+      return false;
+    }
+  return true;
+}
+</script>
+</body>
+<footer>
+  <p>ClassRoom Connect</p>
+</footer>
+
+</html>
