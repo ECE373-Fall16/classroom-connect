@@ -9,5 +9,7 @@ before_script:
     - composer install
 script: phpunit --configuration phpunit.xml --coverage-text
 before_install:
--mysql -e 'CREATE DATABASE IF NOT EXISTS test;'
+-mysql -e 'CREATE DATABASE IF NOT EXISTS CLASSROOMCONNECT;'
 -mysql < CLASSROOMCONNECTtest.sql
+services:
+    -mysql
